@@ -1,0 +1,101 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-page:       var(--page);
+  --color-surface:    var(--surface);
+  --color-card:       var(--card);
+  --color-ink:        var(--ink);
+  --color-ink-muted:  var(--ink-muted);
+  --color-accent:     var(--accent);
+  --color-accent-hi:  var(--accent-hi);
+  --color-rim:        var(--rim);
+  --font-sans:        var(--font-geist-sans);
+  --font-mono:        var(--font-geist-mono);
+}
+
+/* ── Light mode ───────────────────────────────────────────────── */
+:root {
+  --page:             #f3edd9;
+  --surface:          #ebe4cc;
+  --card:             #e3dbc4;
+  --ink:              #0b1929;
+  --ink-muted:        #3d5f78;
+  --accent:           #0e7490;
+  --accent-hi:        #0891b2;
+  --rim:              #b8c9d4;
+  --ecg-glow:         rgba(8, 145, 178, 0.14);
+  --ecg-border-hover: rgba(8, 145, 178, 0.32);
+}
+
+/* ── Dark mode ────────────────────────────────────────────────── */
+.dark {
+  --page:             #060b12;
+  --surface:          #0a1020;
+  --card:             #0e1628;
+  --ink:              #cfe8f5;
+  --ink-muted:        #527a96;
+  --accent:           #0891b2;
+  --accent-hi:        #22d3ee;
+  --rim:              #152535;
+  --ecg-glow:         rgba(34, 211, 238, 0.12);
+  --ecg-border-hover: rgba(34, 211, 238, 0.28);
+}
+
+/* ── Base ─────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--page);
+  color: var(--ink);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  /* No CSS background dots — replaced by interactive canvas DotGrid */
+}
+
+/* ── Radar pulse: status indicator dot ───────────────────────── */
+@keyframes radar-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(34, 211, 238, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0);
+  }
+}
+
+.radar-dot {
+  animation: radar-pulse 2.2s ease-out infinite;
+}
+
+/* ── ECG heartbeat: dashboard panel hover ────────────────────── */
+@keyframes ecg-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    box-shadow: 0 0 28px 4px var(--ecg-glow);
+  }
+}
+
+.ecg-panel {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease,
+    background-color 0.2s ease;
+}
+
+.ecg-panel:hover {
+  border-color: var(--ecg-border-hover);
+  animation: ecg-pulse 2.5s ease-in-out infinite;
+}
+
+/* ── Smooth theme transitions ─────────────────────────────────── */
+*,
+::before,
+::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}
