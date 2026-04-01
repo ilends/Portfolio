@@ -14,7 +14,7 @@ type ChangeItem = {
 type Release = {
   version: string;
   date: string;
-  label: "latest" | "initial";
+  label: "latest" | "minor" | "initial";
   summary: string;
   changes: ChangeItem[];
 };
@@ -23,9 +23,18 @@ type Release = {
 
 const RELEASES: Release[] = [
   {
-    version: "v1.1.0",
+    version: "v1.1.1",
     date: "Apr 1, 2026",
     label: "latest",
+    summary: "Added auto-generated sitemap for SEO.",
+    changes: [
+      { kind: "new", text: "Auto-generated `sitemap.xml` via Next.js App Router, covering all static pages and dynamic project routes." },
+    ],
+  },
+  {
+    version: "v1.1.0",
+    date: "Apr 1, 2026",
+    label: "minor",
     summary: "Major update: mobile support, security hardening, new projects and case study pages, visual rebrand, and UX polish across the whole site.",
     changes: [
       { kind: "new",      text: "Favicon and PWA icons: browser tab, iOS home screen, Android Chrome (192 × 192 and 512 × 512) with matching deep-navy theme colour." },
