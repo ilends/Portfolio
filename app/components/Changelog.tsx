@@ -24,7 +24,7 @@ type Release = {
 const RELEASES: Release[] = [
   {
     version: "v1.1.0",
-    date: "Mar 31, 2026",
+    date: "Apr 1, 2026",
     label: "latest",
     summary: "Major update: mobile support, security hardening, new projects and case study pages, visual rebrand, and UX polish across the whole site.",
     changes: [
