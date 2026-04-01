@@ -1,8 +1,20 @@
 import type { Metadata } from "next";
 import { FadeIn } from "../components/FadeIn";
 
+function S({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      className="text-accent-hi font-semibold"
+      style={{ textShadow: "0 0 8px rgba(82,171,152,0.35)" }}
+    >
+      {children}
+    </span>
+  );
+}
+
 export const metadata: Metadata = {
-  title: "Experience – David Angelo",
+  title: "Experience",
+  description: "Education, clinical roles, and team experience — Engineering Science at UofT, lifeguard and first aid instructor, and robotics competition team.",
 };
 
 /* ── Data ─────────────────────────────────────────────────────── */
@@ -12,7 +24,7 @@ type Entry = {
   org: string;
   location: string;
   period: string;
-  bullets: string[];
+  bullets: React.ReactNode[];
   tags: string[];
 };
 
@@ -31,11 +43,11 @@ const SECTIONS: Section[] = [
         location: "Toronto, ON",
         period: "2025 – Present",
         bullets: [
-          "CGPA: 3.68 / 4.0 — Dean's List, Fall 2025",
-          "Shaw Admission Scholarship recipient",
-          "Expected graduation: June 2030",
+          <>CGPA: <S>3.68 / 4.0</S> — Dean&apos;s List, <S>Fall 2025</S></>,
+          <>Shaw Admission Scholarship recipient</>,
+          <>Expected graduation: <S>June 2030</S></>,
         ],
-        tags: ["Python", "MATLAB", "C", "LaTeX"],
+        tags: ["Engineering Design", "Systems Modelling", "Computational Mathematics", "Technical Communication"],
       },
     ],
   },
@@ -48,10 +60,11 @@ const SECTIONS: Section[] = [
         location: "Mississauga, ON",
         period: "Sep 2025 – Present",
         bullets: [
-          "Instructs first aid and aquatic lifesaving procedures to 15 candidates per cohort, achieving an 86% pass rate",
-          "Apprenticed under a senior instructor before assuming full independent responsibility in professional settings",
+          <>Co-instructs and evaluates Emergency First Aid cohorts of <S>15+</S> candidates, maintaining an <S>86%</S> success rate against national Lifesaving Society standards.</>,
+          <>Executes high-fidelity emergency simulations to assess candidate response times and medical intervention accuracy.</>,
+          <>Currently completing Examiner and Standard First Aid instructional practicums to independently evaluate and authorize national certifications.</>,
         ],
-        tags: ["Leadership", "First Aid", "CPR", "Teaching"],
+        tags: ["Leadership", "Emergency Protocols", "Simulation Design", "Clinical Evaluation"],
       },
       {
         title: "Lifeguard & Swim Instructor",
@@ -59,10 +72,10 @@ const SECTIONS: Section[] = [
         location: "Mississauga, ON",
         period: "Aug 2023 – Present",
         bullets: [
-          "Teaches progressive swimming skills to 150+ youth, building water confidence and safety awareness across age groups",
-          "Supervises up to 100 patrons simultaneously; mentored 5+ junior instructors compliant to standard policy",
+          <>Manages dynamic risk mitigation and aquatic safety protocols for high-traffic environments of up to <S>100+</S> concurrent patrons.</>,
+          <>Mentored <S>5+</S> junior staff members, ensuring strict adherence to standardized emergency response policies and public health compliance.</>,
         ],
-        tags: ["NLS", "Supervision", "Instruction", "Safety"],
+        tags: ["NLS", "Supervision", "Risk Management", "Crisis Prevention", "Public Health"],
       },
     ],
   },
@@ -75,8 +88,8 @@ const SECTIONS: Section[] = [
         location: "Mississauga, ON",
         period: "Sep 2023 – May 2025",
         bullets: [
-          "Calculated chassis cutting angles from CAD drawings, reducing fabrication error to <5 mm variance for the 2025 Waterloo Electric Vehicle Challenge",
-          "Secured $5,000+ in team sponsorships through outreach to 10+ organisations for the 2024 FIRST Robotics Competition — Team Sustainability Award",
+          <>Calculated chassis cutting angles from CAD drawings, reducing fabrication error to <S>&lt;5 mm</S> variance for the 2025 Waterloo Electric Vehicle Challenge</>,
+          <>Secured <S>$5,000+</S> in team sponsorships through outreach to <S>10+ organisations</S> for the 2024 FIRST Robotics Competition — Team Sustainability Award</>,
         ],
         tags: ["CAD", "FIRST Robotics", "Fundraising", "EV Design"],
       },
@@ -125,7 +138,7 @@ function EntryPanel({ entry }: { entry: Entry }) {
               className="flex gap-3 text-base text-ink-muted leading-relaxed"
             >
               <span className="mt-2 w-1.5 h-1.5 rounded-full bg-accent-hi shrink-0" />
-              {b}
+              <span>{b}</span>
             </li>
           ))}
         </ul>
@@ -150,7 +163,7 @@ function SectionGroup({ section }: { section: Section }) {
         <h2 className="text-xs font-bold tracking-[0.2em] uppercase text-accent-hi whitespace-nowrap">
           {section.category}
         </h2>
-        <div className="flex-1 h-px bg-accent-hi/20" />
+        <div className="flex-1 h-px bg-gradient-to-r from-accent-hi/35 to-transparent" />
       </div>
 
       <div className="flex flex-col gap-5">

@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { FadeIn, StaggerContainer, StaggerItem } from "../components/FadeIn";
 
 export const metadata: Metadata = {
-  title: "Contact – David Angelo",
+  title: "Contact",
+  description: "Get in touch with David Angelo — open to research collaborations, engineering opportunities, and interesting conversations.",
 };
 
 /* ── Icons ────────────────────────────────────────────────────── */

@@ -24,7 +24,7 @@ function Waves() {
         >
           <path
             d="M0,90 C240,130 480,50 720,90 C960,130 1200,50 1440,90 L1440,180 L0,180 Z"
-            fill="rgba(34,211,238,0.04)"
+            fill="rgba(82,171,152,0.05)"
           />
         </svg>
       </motion.div>
@@ -43,7 +43,7 @@ function Waves() {
         >
           <path
             d="M0,70 C360,20 720,120 1080,70 C1260,45 1380,95 1440,70 L1440,160 L0,160 Z"
-            fill="rgba(34,211,238,0.06)"
+            fill="rgba(82,171,152,0.07)"
           />
         </svg>
       </motion.div>
@@ -62,7 +62,7 @@ function Waves() {
         >
           <path
             d="M0,50 C360,100 720,0 1080,50 C1260,75 1380,25 1440,50 L1440,140 L0,140 Z"
-            fill="rgba(8,145,178,0.09)"
+            fill="rgba(43,103,119,0.11)"
           />
         </svg>
       </motion.div>
@@ -76,7 +76,7 @@ function Waves() {
       >
         <path
           d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,40 L1440,80 L0,80 Z"
-          fill="rgba(34,211,238,0.05)"
+          fill="rgba(82,171,152,0.06)"
         />
       </svg>
     </div>
@@ -114,7 +114,7 @@ export function SplashScreen() {
             },
           }}
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden"
-          style={{ backgroundColor: "#060b12" }}
+          style={{ backgroundColor: "#0A1118" }}
         >
           {/* Animated waves */}
           <Waves />
@@ -130,14 +130,14 @@ export function SplashScreen() {
             <motion.div
               className="w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-bold tracking-tight shadow-2xl"
               style={{
-                background: "linear-gradient(135deg, #0891b2, #22d3ee)",
-                boxShadow: "0 0 40px rgba(34,211,238,0.25), 0 0 0 4px rgba(34,211,238,0.12)",
+                background: "linear-gradient(135deg, #2B6777, #52AB98)",
+                boxShadow: "0 0 32px rgba(82,171,152,0.18), 0 0 0 3px rgba(82,171,152,0.10)",
               }}
               animate={{
                 boxShadow: [
-                  "0 0 40px rgba(34,211,238,0.25), 0 0 0 4px rgba(34,211,238,0.12)",
-                  "0 0 60px rgba(34,211,238,0.40), 0 0 0 8px rgba(34,211,238,0.08)",
-                  "0 0 40px rgba(34,211,238,0.25), 0 0 0 4px rgba(34,211,238,0.12)",
+                  "0 0 32px rgba(82,171,152,0.18), 0 0 0 3px rgba(82,171,152,0.10)",
+                  "0 0 48px rgba(82,171,152,0.28), 0 0 0 6px rgba(82,171,152,0.06)",
+                  "0 0 32px rgba(82,171,152,0.18), 0 0 0 3px rgba(82,171,152,0.10)",
                 ],
               }}
               transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
@@ -149,13 +149,13 @@ export function SplashScreen() {
             <div className="text-center">
               <p
                 className="text-2xl font-bold tracking-tight"
-                style={{ color: "#cfe8f5" }}
+                style={{ color: "#C8D8E4" }}
               >
                 David Angelo
               </p>
               <p
                 className="text-[11px] font-mono tracking-[0.22em] uppercase mt-1"
-                style={{ color: "rgba(34,211,238,0.5)" }}
+                style={{ color: "rgba(82,171,152,0.55)" }}
               >
                 Engineering Science · UofT
               </p>
@@ -164,11 +164,11 @@ export function SplashScreen() {
             {/* Progress bar */}
             <div
               className="w-48 rounded-full overflow-hidden"
-              style={{ height: 2, backgroundColor: "rgba(21,37,53,0.8)" }}
+              style={{ height: 2, backgroundColor: "rgba(26,48,64,0.8)" }}
             >
               <motion.div
                 className="h-full rounded-full"
-                style={{ backgroundColor: "#22d3ee" }}
+                style={{ backgroundColor: "#52AB98" }}
                 initial={{ width: "0%" }}
                 animate={{ width: "100%" }}
                 transition={{ duration: 1.85, ease: "easeInOut" }}

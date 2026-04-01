@@ -21,25 +21,31 @@
   --card:             #e3dbc4;
   --ink:              #0b1929;
   --ink-muted:        #3d5f78;
-  --accent:           #0e7490;
-  --accent-hi:        #0891b2;
+  --accent:           #2B6777;
+  --accent-hi:        #38A3A5;
   --rim:              #b8c9d4;
-  --ecg-glow:         rgba(8, 145, 178, 0.14);
-  --ecg-border-hover: rgba(8, 145, 178, 0.32);
+  --ecg-glow:         rgba(43, 103, 119, 0.10);
+  --ecg-border-hover: rgba(43, 103, 119, 0.26);
+  --grid-minor:       rgba(43, 103, 119, 0.04);
+  --grid-major:       rgba(43, 103, 119, 0.07);
+  --ekg-line:         rgba(43, 103, 119, 0.06);
 }
 
 /* ── Dark mode ────────────────────────────────────────────────── */
 .dark {
-  --page:             #060b12;
-  --surface:          #0a1020;
-  --card:             #0e1628;
-  --ink:              #cfe8f5;
+  --page:             #0A1118;
+  --surface:          #0D1525;
+  --card:             #112033;
+  --ink:              #C8D8E4;
   --ink-muted:        #527a96;
-  --accent:           #0891b2;
-  --accent-hi:        #22d3ee;
-  --rim:              #152535;
-  --ecg-glow:         rgba(34, 211, 238, 0.12);
-  --ecg-border-hover: rgba(34, 211, 238, 0.28);
+  --accent:           #2B6777;
+  --accent-hi:        #52AB98;
+  --rim:              #1a3040;
+  --ecg-glow:         rgba(82, 171, 152, 0.08);
+  --ecg-border-hover: rgba(82, 171, 152, 0.22);
+  --grid-minor:       rgba(82, 171, 152, 0.03);
+  --grid-major:       rgba(82, 171, 152, 0.055);
+  --ekg-line:         rgba(82, 171, 152, 0.07);
 }
 
 /* ── Base ─────────────────────────────────────────────────────── */
@@ -51,19 +57,19 @@ body {
   background-color: var(--page);
   color: var(--ink);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  /* No CSS background dots — replaced by interactive canvas DotGrid */
+  /* No CSS background dots — replaced by graph-paper DotGrid */
 }
 
 /* ── Radar pulse: status indicator dot ───────────────────────── */
 @keyframes radar-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.7);
+    box-shadow: 0 0 0 0 rgba(82, 171, 152, 0.45);
   }
   70% {
-    box-shadow: 0 0 0 7px rgba(34, 211, 238, 0);
+    box-shadow: 0 0 0 6px rgba(82, 171, 152, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0);
+    box-shadow: 0 0 0 0 rgba(82, 171, 152, 0);
   }
 }
 
@@ -77,7 +83,7 @@ body {
     box-shadow: 0 0 0 0 transparent;
   }
   50% {
-    box-shadow: 0 0 28px 4px var(--ecg-glow);
+    box-shadow: 0 0 6px 1px var(--ecg-glow);
   }
 }
 

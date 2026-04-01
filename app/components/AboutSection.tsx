@@ -61,14 +61,28 @@ const PILLARS = [
   },
   {
     icon: <LightbulbIcon />,
-    title: "The Mindset",
+    title: "Design Philosophy",
     body: "I'm a learner first. I thrive to remain curious, willing to change my assumptions, and strive to build solutions around a stakeholder-centric approach.",
   },
 ];
 
-const SKILLS = [
-  "Python", "MATLAB", "Excel", "SolidWorks",
-  "HTML", "CSS", "JavaScript", "C", "LaTeX",
+const SKILL_GROUPS = [
+  {
+    label: "Programming",
+    items: ["Python", "NumPy", "Matplotlib", "MATLAB", "C"],
+  },
+  {
+    label: "Design & CAD",
+    items: ["Fusion 360", "Onshape", "SolidWorks"],
+  },
+  {
+    label: "Digital Infrastructure",
+    items: ["Git", "Vercel", "Snyk", "DNS & Domain Management"],
+  },
+  {
+    label: "Analysis & Media",
+    items: ["LaTeX", "Excel", "Tracker", "Adobe After Effects", "Wondershare Filmora", "FL Studio"],
+  },
 ];
 
 /* ── Shared sub-components ────────────────────────────────────── */
@@ -79,7 +93,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
       <span className="text-xs font-bold tracking-[0.2em] uppercase text-accent-hi whitespace-nowrap">
         {children}
       </span>
-      <div className="flex-1 h-px bg-accent-hi/20" />
+      <div className="flex-1 h-px bg-gradient-to-r from-accent-hi/35 to-transparent" />
     </div>
   );
 }
@@ -218,14 +232,23 @@ export function AboutSection() {
       <FadeIn>
         <SectionLabel>Technical Skills</SectionLabel>
         <SectionCard title="Technical Skills">
-          <div className="flex flex-wrap gap-2">
-            {SKILLS.map((skill) => (
-              <span
-                key={skill}
-                className="px-3.5 py-1.5 text-sm font-medium rounded-full border border-accent/40 text-accent-hi bg-accent/10 hover:bg-accent/20 transition-colors duration-150"
-              >
-                {skill}
-              </span>
+          <div className="flex flex-col gap-5">
+            {SKILL_GROUPS.map((group) => (
+              <div key={group.label}>
+                <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-ink-muted/40 mb-2.5">
+                  {group.label}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {group.items.map((skill) => (
+                    <span
+                      key={skill}
+                      className="px-3.5 py-1.5 text-sm font-medium rounded-full border border-accent/40 text-accent-hi bg-accent/10 hover:bg-accent/20 transition-colors duration-150"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </SectionCard>
