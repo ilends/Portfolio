@@ -74,7 +74,7 @@ const DESIGN_PROJECTS: Project[] = [
       </>
     ),
     date: "Fall 2025",
-    tags: ["Fusion 360", "Prototyping", "Drafting", "LaTeX"],
+    tags: ["Fusion 360", "Human Factors", "Iterative Prototyping", "Ergonomics"],
     status: "Completed",
     slug: "glove-doffing-device",
   },

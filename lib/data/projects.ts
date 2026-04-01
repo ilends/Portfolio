@@ -68,19 +68,19 @@ export const CASE_STUDIES: CaseStudy[] = [
     title: "Glove Doffing Device",
     subtitle: "ESC101 · Praxis I · University of Toronto",
     date: "Sep – Dec 2025",
-    tags: ["Fusion 360", "LaTeX", "Prototyping", "Drafting"],
+    tags: ["Fusion 360", "Human Factors", "Iterative Prototyping", "Ergonomic Design"],
     teamSize: 5,
     status: "Completed",
     kind: "design",
     summary:
-      "Reduced glove-removal contamination from 37 % to 5 % using a 0.5 g tape-tab device requiring no mounting hardware.",
+      "Designed a zero-hardware doffing mechanism that reduced glove-removal contamination from 37% to 5% and achieved an 8.82 s removal time, optimizing for high-stress, dynamic emergency environments with no mounting hardware.",
     links: [
       { label: "Design Report", href: "/api/pdf/glove-doffing", type: "pdf" },
       { label: "Supplemental Video", href: "https://youtu.be/_ekc9W8wXEI", type: "external" },
     ],
 
     problem:
-      "Healthcare workers contaminate their skin at a documented 37 % rate when using the standard pinch-pull-slide technique. The method degrades under fatigue, moisture, and time pressure — conditions that are normal for first-aid responders. Two team members volunteer with UTEFR (UofT First Responders), grounding the design challenge in real operational context from day one.",
+      "Healthcare workers and first responders contaminate their skin at a documented 37% rate when using the standard pinch-pull-slide glove removal technique. This multi-step method degrades under fatigue, moisture, and time pressure. As a Standard First Aid instructor and lifeguard alongside another group member, we have seen how these conditions compromise safety in emergency medical responses. Grounded in this context, this project aimed to engineer a doffing method that inherently contains pathogens without demanding complex motor skills.",
 
     constraints: [
       { label: "Max Operational Force", value: "< 22.2", unit: "N", rationale: "2010 ADA Accessible Design Standard." },
@@ -88,68 +88,67 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: "Doffing Time", value: "< 10.9", unit: "s", rationale: "95th-percentile baseline from team wet/dry experiment." },
       { label: "Contact Rate", value: "< 37", unit: "%", rationale: "Must improve on the documented healthcare baseline." },
       { label: "Durability (FOS)", value: "≥ 3×", unit: "operational load", rationale: "Must survive 3× operational force without failure." },
-      { label: "Team", value: "5", unit: "members · Group 40" },
     ],
 
     design:
-      "Before generating ideas, we analysed existing reference designs from the design brief. Fixed wall hooks work like a second finger but leave the contaminated side exposed and aren't portable. The only portable hook design required one uncontaminated hand — placing it adjacent to the contaminated glove surface, which defeats the purpose. Vacuum machines introduced pressure injury risk and required cleaning after every use. The key pattern: *no reference design inverted the glove to contain contaminants*. That became the core requirement shaping everything that followed.\n\nTo diverge without anchoring on any of these, we used a Lotus Blossom and Morph Chart to break the problem into sub-functions — doffing mechanism, mounting, disposal — before naming any concept. Five ideas emerged: Hook, Glove Slicer, Tape, Air Blower, and Water Pump. The Air Blower and Water Pump were eliminated early: a bike pump couldn't overcome glove friction, and the water pump created uncontrolled splatter.",
+      "Initial analysis of existing reference designs revealed a critical flaw: fixed wall hooks exposed the contaminated side and lacked portability, while portable hooks placed the uncontaminated hand dangerously close to hazardous surfaces. Furthermore, no existing reference design reliably inverted the glove to contain contaminants. To avoid anchoring bias, we utilized Lotus Blossom and Morph charts to isolate sub-functions (doffing mechanism, mounting, disposal) before synthesizing full concepts.",
 
     iterations:
-      "The **Hook** (51.47 N operational force) exceeded the ADA 22.2 N limit by more than double. Scaled-down iterations improved portability but failed the 3× load durability requirement; eliminated by Pugh chart.\n\nThe **Glove Slicer** met every criterion and matched the Tape on safety scores. We steelmanned it: blade recessed for fingertip safety, outperformed hand-doffing on all six metrics. But it required a rigid mount — restricting it to stakeholders who always wear a belt.\n\nThe **Tape design** went through three focused iterations:\n• Clear scotch tape — functional, but tab was slow to locate under time pressure\n• 3M 401+ masking tape — 1.31 s faster on average than scotch tape across trials\n• Thumb-positioned tab — 8 of 10 users reported least discomfort and fastest doffing time",
+      "The Hook: Scaled-down iterations focused on portability failed the 3x operational load durability requirement and demanded excessive operational force (up to 51.47 N).\n\nThe Glove Slicer: Underwent four iterations to produce a dual-blade cutting mechanism with a shielded access slot to ensure fingertip safety. It outperformed hand-doffing but required a rigid belt mount. This limits usability for unbelted personnel in dynamic clinical settings. Eliminated after holistic evaluation.\n\nThe **Tape design** went through three focused iterations:\n• Clear scotch tape: Functional, but the transparent tab was slow to locate under time pressure.\n• 3M 401+ masking tape: Improved visibility and moisture resistance yielded a 1.31 s faster doffing time.\n• Thumb positioned tab: Moving the tab parallel to the thumb optimized removal mechanics and ensured the peak operational force remained a highly accessible 15.21 N.",
 
     testing:
-      "Each design was evaluated against six proxy tests: dye-contact rates over 20 trials, splatter distance with coloured liquid, operational force on a kitchen scale, dual-hand doffing time averaged over 5 trials, device mass, and a 3× structural load test. Results were compiled into a Measurement Matrix and two-stage Pugh chart. A 10-student survey evaluated holistic user preference between the two finalist designs.",
+      "Prototypes underwent rigorous proxy testing, including fluorescent dye-contact rates over 20 trials, measured splatter distance, and continuous load-to-failure structural testing. Results were quantified in a Measurement Matrix and a two-stage Pugh chart, using the standard Hook as the initial baseline before evaluating the Slicer and Tape holistically.",
 
     results: {
-      headline: "8.82 s avg. doffing time · 70 % user preference · effectively zero manufacturing cost",
-      body: "Achieved 8.82 s average doffing time against a 10.9 s requirement. In a 10-participant survey, 70 % preferred the Tape over the Slicer. Mass came in at 0.5 g — 1000× below the 500 g limit — and the device costs nothing to produce beyond the tape itself.",
+      headline: "8.82 s avg. doffing time · 15.21 N actuation force · effectively zero manufacturing cost",
+      body: "Validated against rigorous proxy tests for contact rates, contaminant splatter, and operational force. The final tape-tab design achieved a 5% contact rate against a 37% healthcare baseline and an 8.82 s average doffing time. It requires only 15.21 N of actuation force, comfortably meeting the 22.2 N ADA Accessible Design Standard. At 0.5 g, it operates 1000x below the ergonomic weight limit and costs effectively zero to scale.",
     },
 
     lessons:
-      "The most impactful single variable was tab position — placing it at the thumb cuff gave the best combination of doffing time and user comfort. Simpler solutions are harder to beat: the tape design wins because it introduces no hardware, no mount, and no new failure mode.",
+      "The most significant struggle in this project was overcoming the engineering bias toward complex, hardware-heavy solutions. Early diverging produced over-engineered concepts like air blowers and water pumps, which catastrophically failed in testing because they could not overcome the friction of moist skin and introduced uncontrollable fluid splatter. We learned that in high-stress medical environments, introducing new hardware inherently introduces new failure modes. The ultimate takeaway was that true accessible design does not always mean building a better machine. Sometimes, it requires optimizing a fundamental physical interaction to make it safer and completely frictionless.",
 
     images: [
       {
         src: "/images/glove-doffing/whiteboard-sketches.png",
         alt: "Early whiteboard ideation session, Praxis Group 40, Oct 22 2025",
         caption:
-          "Early ideation — Praxis Group 40, Oct 22 2025. Sketches include compliant hooks, air-powered doffers, glove cutters, a water pump, and belt-mounted variants. All five final concepts are visible here in rough form.",
+          "Early ideation (Oct 22 2025). Sketches include five concepts that are visible in rough form on the whiteboard.",
       },
       {
         src: "/images/glove-doffing/lotus-blossom.png",
         alt: "Lotus Blossom diverging activity for the glove doffing opportunity",
         caption:
-          "Lotus Blossom diverging activity — sub-problems include Safety, Human Factors, Sustainability, Accessibility, and Durability. Deliberately breaking the problem into isolated sub-functions before combining them reduced anchoring bias toward existing hook designs.",
+          "Lotus Blossom diverging activity to break the problem into isolated sub-functions and reduce anchoring bias toward existing hook designs.",
       },
       {
         src: "/images/glove-doffing/hook-iterations.png",
         alt: "Four 3D-printed iterations of the hook design",
         caption:
-          "Four 3D-printed hook iterations scaled down from the reference design for portability. Despite progressive geometry changes to distribute load and lower force, all iterations either failed the 3× load durability test or exceeded the 22.2 N ADA force limit.",
+          "Four 3D-printed iterations of the portable hook were tested. Some variations had major safety concerns due to exposed blades.",
       },
       {
         src: "/images/glove-doffing/slicer-fusion-side.png",
         alt: "Fusion 360 CAD model of the glove slicer — side view",
         caption:
-          "Fusion 360 model of the Glove Slicer (side view). Dual-blade cutting mechanism with a shielded access slot — blade depth and slit width were iterated to make accidental finger contact geometrically impossible.",
+          "Fusion 360 model of the Glove Slicer (side view). Iterated on blade depth and slit width to make accidental finger contact geometrically impossible.",
       },
       {
         src: "/images/glove-doffing/slicer-fusion-front.png",
         alt: "Fusion 360 CAD model of the glove slicer — belt-mount view",
         caption:
-          "Glove Slicer — belt-mount view. The two legs straddle a belt loop; the cutting slit faces upward. The final iteration added a second blade and a side-mounted replaceable blade door. Met every evaluation criterion but required a belt to function.",
+          "Glove Slicer (belt-mount view). The two legs straddle a belt loop and the cutting slit faces upward.",
       },
       {
         src: "/images/glove-doffing/tape-final.png",
         alt: "Final tape design — green 3M 401+ masking tape on the inner wrist cuff",
         caption:
-          "Final design: 18 cm of 3M 401+ masking tape positioned at the thumb cuff. Head-to-head timing trials showed a 1.31 s improvement over clear scotch tape; thumb-cuff placement was confirmed as optimal by an 8-of-10 user preference count.",
+          "Final design: 3M 401+ masking tape positioned at the thumb cuff.",
       },
       {
         src: "/images/glove-doffing/alpha-release.png",
         alt: "Group 40 at the Alpha Release mid-semester design showcase",
         caption:
-          "Group 40 at the Alpha Release presentation. The poster shows the diverging process, five prototype concepts, and early proxy test data. The blue 3D-printed hook prototypes are visible on the table.",
+          "Group 40 at the Alpha Release presentation. The poster shows the diverging process, five prototype concepts with some visible on the table, and early proxy test data.",
       },
     ],
   },
@@ -160,7 +159,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     title: "CIV102 Matboard Bridge Design",
     subtitle: "CIV102 · Structures & Materials · University of Toronto",
     date: "Nov – Dec 2025",
-    tags: ["Python", "Structural Engineering", "Statics", "Matboard"],
+    tags: ["Python", "Structural Engineering", "Statics", "Safety Analysis"],
     teamSize: 4,
     status: "Completed",
     kind: "design",
@@ -183,13 +182,13 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
 
     design:
-      "Before touching any matboard, we parameterised the cross-section in Python: top flange width and thickness, web height, glue tab widths, diaphragm spacing, and automated all eight factor-of-safety calculations. This converted iteration from a hand-calculation marathon into a trade-off table comparison. **Design 0** (the course reference) failed immediately under Load Case 1 due to Case 1 plate buckling in the restrained top flange.",
+      "Before touching any matboard, we calculated localized stress concentrations and evaluated the cross-section against tensile failure, compressive failure, material shear, glue shear, and 3 distinct plate buckling modes. We then parameterised the cross-section in Python: top flange width and thickness, web height, glue tab widths, diaphragm spacing, and automated all eight factor-of-safety calculations. This converted iteration from a hand-calculation marathon into a trade-off table comparison. The final design was modeled using Onshape and cut out from a single 1020 x 810 mm matboard sheet.",
 
     iterations:
-      "**Iteration 1**: Doubled top flange (1.27 → 2.54 mm), removed bottom flange, extended glue tab to 80 mm across the full web span. All eight FOS ≥ 1.0. Weaknesses remaining: compression, tension, shear buckling.\n\n**Iteration 2**: Raised web height (78.73 → 100 mm); cut diaphragm spacing (400 → 100 mm). All three weaknesses improved simultaneously.\n\n**Iteration 3**: Wider flange (100 → 120 mm). Compression improved but Case 2 buckling dropped by a factor of four. Material in the horizontal plane is far less efficient than in the vertical plane. Reverted.\n\n**Iteration 4**: Flange back to 100 mm; web to 120 mm. Most metrics improved; web height locked at 120 mm.\n\n**Final design**: Zoned glue tabs; 77.46 mm centrally (bending-dominant) and 30 mm combined in the outer thirds (shear-dominant), matching the moment envelope and allowing all pieces to fit onto the physical matboard sheet.",
+      "**Design 0** (the course reference) failed immediately under Load Case 1 due to Case 1 plate buckling in the restrained top flange.\n\n**Iteration 1**: Doubled top flange (1.27 → 2.54 mm), removed bottom flange, extended glue tab to 80 mm across the full web span. All eight FOS ≥ 1.0. Weaknesses remaining: compression, tension, shear buckling.\n\n**Iteration 2**: Raised web height (78.73 → 100 mm); cut diaphragm spacing (400 → 100 mm). All three weaknesses improved simultaneously.\n\n**Iteration 3**: Wider flange (100 → 120 mm). Compression improved but Case 2 buckling dropped by a factor of four. Material in the horizontal plane is far less efficient than in the vertical plane. Reverted.\n\n**Iteration 4**: Flange back to 100 mm; web to 120 mm. Most metrics improved; web height locked at 120 mm.\n\n**Final design**: Zoned glue tabs; 77.46 mm centrally (bending-dominant) and 30 mm combined in the outer thirds (shear-dominant), matching the moment envelope and allowing all pieces to fit onto the physical matboard sheet.",
 
     testing:
-      "All structural analysis was conducted in Python before any fabrication. The script plotted shear force and bending moment envelopes and outputted all eight factors of safety for any given cross-section. Each iteration was tested against both Load Case 1 (400 N) and Load Case 2 (452 N). Physical construction followed only after computational sign-off on every failure mode.",
+      "All structural analysis was conducted in Python before any fabrication. The script plotted shear force and bending moment envelopes and outputted all eight factors of safety for any given cross-section. Each iteration was tested against both Load Case 1 (400 N) and Load Case 2 (452 N). Physical construction followed only after computational sign-off on every failure mode. The final design was tested against increasing point loads: 133 N, 266 N, 400 N, 450 N, failing at 520 N andsustaining a total load of 1250 N.",
 
     results: {
       headline: "Compression governed at FOS 2.49 · Physical Testing Validates 450 N Sustained Load",
@@ -257,7 +256,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     title: "Dolphin Kick Biomechanics",
     subtitle: "Mathematical Modelling · Biomechanics",
     date: "Sep 2024 – Jan 2025",
-    tags: ["Mathematical Modelling", "Desmos", "Adobe After Effects", "Calculus", "Piecewise Modelling"],
+    tags: ["Mathematical Modelling", "Biomechanics", "Adobe After Effects", "Kinematic Analysis"],
     teamSize: 1,
     status: "Completed",
     kind: "research",
@@ -321,7 +320,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     title: "DCT in JPEG Compression",
     subtitle: "Signal Processing · Independent Research",
     date: "May 2024 – Feb 2025",
-    tags: ["Python", "Linear Algebra", "Signal Processing", "Image Compression"],
+    tags: ["Python", "Algorithm Implementation", "Signal Processing", "Image Compression"],
     teamSize: 1,
     status: "Completed",
     kind: "research",
