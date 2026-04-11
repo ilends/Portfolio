@@ -1,31 +1,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { AccentGlow } from "../components/AccentGlow";
 import { FadeIn, StaggerContainer, StaggerItem } from "../components/FadeIn";
 
 export const metadata: Metadata = {
   title: "Projects",
   description: "Engineering design projects and mathematical research by David Angelo — structural analysis, signal processing, medical device design, and mathematical modelling.",
+  keywords: [
+    "Engineering Science",
+    "University of Toronto",
+    "Clinical Engineering",
+    "Biomedical Design",
+    "Medical Device Design",
+    "Structural Analysis",
+  ],
 };
-
-/* ── Inline stat highlight ────────────────────────────────────── */
-
-function S({ children }: { children: React.ReactNode }) {
-  return (
-    <span
-      className="text-accent-hi font-semibold"
-      style={{ textShadow: "0 0 8px rgba(82,171,152,0.35)" }}
-    >
-      {children}
-    </span>
-  );
-}
 
 /* ── Section label (matches AboutSection style) ──────────────── */
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-4 mb-7">
-      <span className="text-xs font-bold tracking-[0.2em] uppercase text-accent-hi whitespace-nowrap">
+      <span className="text-xs font-medium tracking-[0.2em] uppercase text-accent-hi whitespace-nowrap">
         {children}
       </span>
       <div className="flex-1 h-px bg-gradient-to-r from-accent-hi/35 to-transparent" />
@@ -43,6 +39,8 @@ type Project = {
   date?: string;
   description: React.ReactNode;
   tags: string[];
+  /** Three Praxis CTMFs for design case studies (optional for research cards). */
+  ctmfs?: readonly [string, string, string];
   status: Status;
   featured?: boolean;
   slug?: string;
@@ -58,23 +56,26 @@ const DESIGN_PROJECTS: Project[] = [
     description:
       "Currently engineering a variable-resistance aquatic training mechanism for the MSSAC High Performance Swim Team. Navigating stakeholder constraints to develop physical prototypes, iterating on user research and concept generation to optimize ergonomics and safety.",
     tags: ["Engineering Design", "Human Factors", "Verification & Validation", "Stakeholder Engagement"],
-    status: "In Progress",
+    ctmfs: ["Stakeholder assessment", "Verification vs. validation", "Poster / one-pager design tools"],
+    status: "Completed",
     featured: true,
+    slug: "placeholder-praxis-ii-case-study",
   },
   {
     title: "Doffing Glove Removal Device",
     subtitle: "ESC101 · Praxis I · University of Toronto",
     description: (
       <>
-        Developed <S>5</S> prototype concepts (Hook, Slicer, Tape, Air Blower,
-        Water Pump) in a team of <S>5</S> for safe vinyl glove removal. Converged
+        Developed <AccentGlow>5</AccentGlow> prototype concepts (Hook, Slicer, Tape, Air Blower,
+        Water Pump) in a team of <AccentGlow>5</AccentGlow> for safe vinyl glove removal. Converged
         on a tape-tab system via Pugh chart analysis and a 10-student survey —
-        achieving a contact rate of <S>5 %</S> (down from <S>37 %</S>), doffing
-        time of <S>8.82 s</S>, and device mass of just <S>0.5 g</S>.
+        achieving a contact rate of <AccentGlow>5 %</AccentGlow> (down from <AccentGlow>37 %</AccentGlow>), doffing
+        time of <AccentGlow>8.82 s</AccentGlow>, and device mass of just <AccentGlow>0.5 g</AccentGlow>.
       </>
     ),
     date: "Fall 2025",
     tags: ["Fusion 360", "Human Factors", "Iterative Prototyping", "Ergonomics"],
+    ctmfs: ["Needs → Goals → Objectives (NGO)", "Morphological charts", "Decision matrices"],
     status: "Completed",
     slug: "glove-doffing-device",
   },
@@ -84,14 +85,15 @@ const DESIGN_PROJECTS: Project[] = [
     description: (
       <>
         Built a simply-supported matboard box-girder bridge in a team of{" "}
-        <S>4</S> across <S>5</S> major iterations guided by a Python structural
-        analysis pipeline evaluating <S>8</S> failure modes. Final design
-        achieved a minimum factor of safety of <S>2.49</S> under Load Case 2
-        (<S>452 N</S>) with compression governing the failure mode.
+        <AccentGlow>4</AccentGlow> across <AccentGlow>5</AccentGlow> major iterations guided by a Python structural
+        analysis pipeline evaluating <AccentGlow>8</AccentGlow> failure modes. Final design
+        achieved a minimum factor of safety of <AccentGlow>2.49</AccentGlow> under Load Case 2
+        (<AccentGlow>452 N</AccentGlow>) with compression governing the failure mode.
       </>
     ),
     date: "Fall 2025",
     tags: ["Python", "Structural Engineering", "Statics", "Safety Analysis"],
+    ctmfs: ["Iteration and refinement", "Trade-offs", "CAD (Onshape)"],
     status: "Completed",
     slug: "civ102-matboard-bridge",
   },
@@ -112,8 +114,8 @@ const RESEARCH_PROJECTS: Project[] = [
     subtitle: "Mathematical Modelling · Biomechanics",
     description: (
       <>
-        Extracted <S>72</S> discrete kinematic data points via GoPro footage and Adobe After Effects motion tracking to model the propulsive mechanics of the human dolphin kick. 
-        Derived an optimal swimming velocity of <S>2.64 m/s</S> by utilizing continuous piecewise functions to evaluate dynamic thrust-to-drag ratios.
+        Extracted <AccentGlow>72</AccentGlow> discrete kinematic data points via GoPro footage and Adobe After Effects motion tracking to model the propulsive mechanics of the human dolphin kick. 
+        Derived an optimal swimming velocity of <AccentGlow>2.64 m/s</AccentGlow> by utilizing continuous piecewise functions to evaluate dynamic thrust-to-drag ratios.
       </>
     ),
     date: "Jan 2025",
@@ -129,7 +131,7 @@ const RESEARCH_PROJECTS: Project[] = [
         Explored the DCT through first principles (DFT → real projection), worked
         through the full JPEG pipeline on a personal beach photo using Python
         matrix operations. Demonstrated that the DCT outperforms the FFT
-        for image reconstruction with <S>near-identical</S> output vs.
+        for image reconstruction with <AccentGlow>near-identical</AccentGlow> output vs.
         visible FFT artifacts due to its continuous periodicity assumption.
       </>
     ),
@@ -143,12 +145,12 @@ const RESEARCH_PROJECTS: Project[] = [
 /* ── Status badge ─────────────────────────────────────────────── */
 
 const STATUS_STYLES: Record<Status, string> = {
-  Completed:     "border-emerald-500/40 text-emerald-400 bg-emerald-400/10",
+  Completed:     "border-emerald-600/45 text-emerald-500 bg-emerald-600/10",
   "In Progress": "border-accent/40 text-accent-hi bg-accent/10",
   Planned:       "border-rim/60 text-ink-muted bg-surface",
 };
 const STATUS_DOT: Record<Status, string> = {
-  Completed:     "bg-emerald-400",
+  Completed:     "bg-emerald-500",
   "In Progress": "bg-accent-hi animate-pulse",
   Planned:       "bg-ink-muted",
 };
@@ -196,16 +198,16 @@ function ProjectCard({
         <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-accent-hi/60" />
       )}
 
-      <div className={`py-7 h-full flex flex-col ${isPlanned ? "px-7" : "pl-8 pr-7"}`}>
+      <div className={`py-7 h-full flex flex-col ${isPlanned ? "px-8" : "pl-8 pr-7"}`}>
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
           <div className="flex items-start gap-4">
-            <span className="font-mono text-3xl font-bold text-accent-hi/20 select-none leading-none mt-0.5 shrink-0">
+            <span className="font-mono text-3xl font-bold text-accent-hi/20 select-none leading-none mt-0.5 shrink-0 tabular-nums">
               {String(index + 1).padStart(2, "0")}
             </span>
             <div>
               {project.date && (
-                <p className="font-mono text-xs text-accent-hi/60 uppercase tracking-widest mb-1">
+                <p className="font-mono text-xs text-accent-hi/78 uppercase tracking-widest mb-0.5">
                   {project.date}
                 </p>
               )}
@@ -236,17 +238,29 @@ function ProjectCard({
           ))}
         </div>
 
+        {/* CTMFs (design portfolio) */}
+        {project.ctmfs && (
+          <div className="mt-4">
+            <p className="text-xs font-semibold tracking-[0.16em] uppercase text-ink-muted mb-1">
+              CTMFs
+            </p>
+            <p className="text-sm text-ink-muted/95 leading-relaxed font-sans">
+              {project.ctmfs[0]} · {project.ctmfs[1]} · {project.ctmfs[2]}
+            </p>
+          </div>
+        )}
+
         {/* Case study link */}
         {project.slug && (
           <div className="mt-4 pt-4 border-t border-rim/30">
             <Link
               href={`/projects/${project.slug}`}
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-hi hover:text-ink transition-colors group"
+              className="inline-flex items-center gap-2 text-sm font-medium text-accent-hi hover:text-ink transition-colors group"
             >
               View Case Study
               <svg
-                width="14"
-                height="14"
+                width="16"
+                height="16"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -280,7 +294,7 @@ function ProjectSection({
         <SectionLabel>{label}</SectionLabel>
       </FadeIn>
 
-      <StaggerContainer className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <StaggerContainer className="grid grid-cols-1 lg:grid-cols-2 gap-5 max-w-7xl mx-auto w-full">
         {projects.map((project, i) => (
           <StaggerItem
             key={project.title}
@@ -298,13 +312,13 @@ function ProjectSection({
 
 export default function ProjectsPage() {
   return (
-    <main className="max-w-7xl mx-auto px-6 xl:px-10 pt-28 pb-24 flex flex-col gap-16">
+    <main className="max-w-7xl mx-auto px-6 xl:px-8 pt-28 pb-24 flex flex-col gap-12">
       {/* Page header */}
       <FadeIn>
         <h1 className="text-5xl font-bold text-ink mb-3 tracking-tight">
           Projects
         </h1>
-        <p className="text-base text-ink-muted max-w-3xl">
+        <p className="text-lg text-ink-muted leading-relaxed max-w-3xl">
         A portfolio of engineering design and quantitative research. 
         Each case study documents the technical methodology, initial constraints, and final stakeholder outcomes, including supplemental documentation.
         </p>

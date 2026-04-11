@@ -12,6 +12,8 @@ const PDF_MAP: Record<string, string> = {
   "bridge":         "bridge-design-report.pdf",
   "dolphin-kick":   "math-ia-dolphin-kick.pdf",
   "dct-jpeg":       "math-ee-dct-jpeg.pdf",
+  /* Place your position statement at private/reports/position-statement.pdf */
+  "position":       "position-statement.pdf",
   /* Place your resume at private/reports/resume.pdf */
   "resume":         "resume.pdf",
 };

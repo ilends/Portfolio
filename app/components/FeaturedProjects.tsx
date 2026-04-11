@@ -7,7 +7,7 @@ import { CASE_STUDIES, type CaseStudy } from "@/lib/data/projects";
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-4 mb-8">
-      <span className="text-xs font-bold tracking-[0.2em] uppercase text-accent-hi whitespace-nowrap">
+      <span className="text-xs font-medium tracking-[0.2em] uppercase text-accent-hi whitespace-nowrap">
         {children}
       </span>
       <div className="flex-1 h-px bg-gradient-to-r from-accent-hi/35 to-transparent" />
@@ -20,10 +20,10 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 function KindBadge({ kind }: { kind: CaseStudy["kind"] }) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.15em] uppercase px-2.5 py-1 rounded-full ${
+      className={`inline-flex items-center gap-1.5 text-[10px] font-medium tracking-[0.15em] uppercase px-2.5 py-1 rounded-full ${
         kind === "design"
           ? "bg-accent/15 text-accent-hi border border-accent/30"
-          : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25"
+          : "bg-emerald-600/10 text-emerald-500 border border-emerald-600/25"
       }`}
     >
       {kind === "design" ? (
@@ -60,17 +60,17 @@ function ProjectCard({ project }: { project: CaseStudy }) {
         {/* Kind + status row */}
         <div className="flex items-center justify-between gap-3">
           <KindBadge kind={project.kind} />
-          <span className="text-[10px] font-mono text-ink-muted/50 tracking-wider">
+          <span className="text-[10px] font-sans text-ink-muted/50 tracking-wider">
             {project.date}
           </span>
         </div>
 
         {/* Title & subtitle */}
         <div>
-          <h3 className="text-lg font-bold text-ink leading-snug group-hover:text-accent-hi transition-colors duration-200">
+          <h3 className="text-lg font-medium text-ink leading-snug group-hover:text-accent-hi transition-colors duration-200">
             {project.title}
           </h3>
-          <p className="text-xs text-ink-muted/70 font-mono mt-1 leading-relaxed">
+          <p className="text-xs text-ink-muted/70 font-sans mt-1 leading-relaxed">
             {project.subtitle}
           </p>
         </div>
@@ -82,10 +82,10 @@ function ProjectCard({ project }: { project: CaseStudy }) {
 
         {/* Results headline — the headline metric */}
         <div className="rounded-lg border border-accent/25 bg-accent/8 px-4 py-3">
-          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-accent-hi/70 mb-1">
+          <p className="text-[10px] font-medium tracking-[0.15em] uppercase text-accent-hi/70 mb-1">
             Key Result
           </p>
-          <p className="text-sm font-semibold text-accent-hi leading-snug">
+          <p className="text-sm font-medium text-accent-hi leading-snug">
             {/* Strip LaTeX from results headline for plain display */}
             {project.results.headline.replace(/\$[^$]*\$/g, "…")}
           </p>
@@ -114,7 +114,7 @@ function ProjectCard({ project }: { project: CaseStudy }) {
         <span className="text-xs font-medium text-ink-muted/60">
           Team of {project.teamSize} · {project.status}
         </span>
-        <span className="flex items-center gap-1.5 text-xs font-semibold text-accent-hi
+        <span className="flex items-center gap-1.5 text-xs font-medium text-accent-hi
                          translate-x-0 group-hover:translate-x-1 transition-transform duration-200">
           View Case Study
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -140,7 +140,7 @@ export function FeaturedProjects() {
 
       {/* Design projects */}
       <FadeIn>
-        <p className="text-[11px] font-bold tracking-[0.18em] uppercase text-ink-muted/40 mb-3">
+        <p className="text-[11px] font-medium tracking-[0.18em] uppercase text-ink-muted/40 mb-3">
           Design
         </p>
       </FadeIn>
@@ -154,7 +154,7 @@ export function FeaturedProjects() {
 
       {/* Research projects */}
       <FadeIn>
-        <p className="text-[11px] font-bold tracking-[0.18em] uppercase text-ink-muted/40 mb-3">
+        <p className="text-[11px] font-medium tracking-[0.18em] uppercase text-ink-muted/40 mb-3">
           Research
         </p>
       </FadeIn>

@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Engineering Science @ UofT — Biomedical Research & Emergency Medicine",
     start_url: "/",
     display: "standalone",
-    theme_color: "#0d1b2a",
-    background_color: "#0d1b2a",
+    theme_color: "#0b0f14",
+    background_color: "#0b0f14",
     icons: [
       {
         src: "/android-chrome-192x192.png",

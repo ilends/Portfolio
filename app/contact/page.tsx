@@ -4,6 +4,13 @@ import { FadeIn, StaggerContainer, StaggerItem } from "../components/FadeIn";
 export const metadata: Metadata = {
   title: "Contact",
   description: "Get in touch with David Angelo — open to research collaborations, engineering opportunities, and interesting conversations.",
+  keywords: [
+    "Engineering Science",
+    "University of Toronto",
+    "Clinical Engineering",
+    "Biomedical Design",
+    "Emergency Medicine",
+  ],
 };
 
 /* ── Icons ────────────────────────────────────────────────────── */
@@ -81,7 +88,7 @@ function ContactButton({
         {icon}
       </span>
       <div>
-        <p className="text-base font-semibold text-ink">{label}</p>
+        <p className="text-base font-medium text-ink">{label}</p>
         <p className="text-sm text-ink-muted">{sublabel}</p>
       </div>
       <svg
@@ -109,7 +116,7 @@ export default function ContactPage() {
     <main className="max-w-2xl mx-auto px-6 pt-28 pb-24">
       {/* Heading */}
       <FadeIn>
-        <h1 className="text-5xl font-bold text-ink mb-3 tracking-tight">
+        <h1 className="text-5xl font-medium text-ink mb-3 tracking-tight">
           Get in Touch
         </h1>
         <p className="text-base text-ink-muted mb-10 leading-relaxed">
@@ -161,7 +168,7 @@ export default function ContactPage() {
       <FadeIn delay={0.3}>
         <div className="flex items-center gap-3 mb-8">
           <div className="flex-1 h-px bg-rim/50" />
-          <span className="text-xs font-semibold tracking-widest uppercase text-ink-muted">
+          <span className="text-xs font-medium tracking-widest uppercase text-ink-muted">
             Based In
           </span>
           <div className="flex-1 h-px bg-rim/50" />
@@ -173,7 +180,7 @@ export default function ContactPage() {
         <div className="rounded-xl border border-rim/50 bg-card px-6 py-5">
           <div className="flex items-center gap-2 text-ink mb-3">
             <PinIcon />
-            <span className="font-semibold text-base">
+            <span className="font-medium text-base">
               Toronto and Mississauga, ON, Canada
             </span>
           </div>

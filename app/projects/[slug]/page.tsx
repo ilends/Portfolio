@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import katex from "katex";
 import { CASE_STUDIES, getCaseStudy } from "@/lib/data/projects";
-import type { Constraint, ProjectLink } from "@/lib/data/projects";
+import type { CaseStudy, Constraint, ProjectLink, FdcrStrand } from "@/lib/data/projects";
 import { FadeIn, StaggerContainer, StaggerItem } from "@/app/components/FadeIn";
 import { ImageGallery } from "@/app/components/ImageGallery";
 
@@ -21,16 +21,37 @@ export async function generateMetadata({
   const { slug } = await params;
   const project = getCaseStudy(slug);
   if (!project) return { title: "Not Found" };
+  const baseKeywords = [
+    "Engineering Science",
+    "University of Toronto",
+    "Clinical Engineering",
+    "Biomedical Design",
+    "Emergency Medicine",
+  ];
   return {
     title: project.title,
     description: project.summary,
-    keywords: project.tags,
+    keywords: [...project.tags, ...baseKeywords],
     openGraph: {
       type: "article",
       title: project.title,
       description: project.summary,
       url: `https://davidangelo.ca/projects/${project.slug}`,
       siteName: "David Angelo",
+      images: [
+        {
+          url: "/android-chrome-512x512.png",
+          width: 512,
+          height: 512,
+          alt: `${project.title} · engineering case study`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: project.title,
+      description: project.summary,
+      images: ["/android-chrome-512x512.png"],
     },
   };
 }
@@ -59,7 +80,7 @@ function parseInline(text: string): React.ReactNode {
       const html = katex.renderToString(match[2], { throwOnError: false, displayMode: false });
       parts.push(<span key={key++} dangerouslySetInnerHTML={{ __html: html }} />);
     } else if (match[3] !== undefined) {
-      parts.push(<strong key={key++} className="font-semibold text-ink">{match[3]}</strong>);
+      parts.push(<strong key={key++} className="font-medium text-ink">{match[3]}</strong>);
     } else {
       parts.push(<em key={key++} className="italic">{match[4]}</em>);
     }
@@ -131,7 +152,7 @@ function ProseBlock({ text }: { text: string }) {
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-4 mb-5">
-      <span className="text-xs font-bold tracking-[0.2em] uppercase text-accent-hi whitespace-nowrap">
+      <span className="text-xs font-medium tracking-[0.2em] uppercase text-accent-hi whitespace-nowrap">
         {children}
       </span>
       <div className="flex-1 h-px bg-gradient-to-r from-accent-hi/35 to-transparent" />
@@ -198,14 +219,14 @@ function ConstraintCard({ constraint }: { constraint: Constraint }) {
   return (
     <div className="ecg-panel rounded-xl border border-rim/50 bg-card p-5 flex flex-col gap-1 relative overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-accent-hi/50 via-accent-hi/20 to-transparent" />
-      <p className="text-xs font-bold tracking-[0.15em] uppercase text-ink-muted mb-1">
+      <p className="text-xs font-medium tracking-[0.15em] uppercase text-ink-muted mb-1">
         {constraint.label}
       </p>
       <div className="flex items-baseline gap-1.5 flex-wrap">
-        <span className="font-mono text-2xl font-bold text-accent-hi leading-none">
+        <span className="font-sans text-2xl font-medium text-accent-hi leading-none">
           {constraint.value}
         </span>
-        <span className="font-mono text-sm text-ink-muted">{constraint.unit}</span>
+        <span className="font-sans text-sm text-ink-muted">{constraint.unit}</span>
       </div>
       {constraint.rationale && (
         <p className="text-xs text-ink-muted mt-2 leading-relaxed">
@@ -226,8 +247,9 @@ const LABELS = {
     iterations: "Iterations",
     testing: "Testing",
     results: "Results",
-    gallery: "Gallery",
-    lessons: "Structural Takeaways",
+    gallery: "Visual evidence",
+    takeaways: "Takeaways & position in context",
+    ctmfSection: "Design process: concepts, tools, models, and frameworks",
   },
   research: {
     problem: "Objective",
@@ -236,10 +258,178 @@ const LABELS = {
     iterations: "Process",
     testing: "Analysis",
     results: "Findings",
-    gallery: "Gallery",
-    lessons: "Structural Takeaways",
+    gallery: "Visual evidence",
+    takeaways: "Takeaways & position",
+    ctmfSection: "Concepts, tools, models, and frameworks",
   },
 } as const;
+
+const FDCR_BADGE: Record<
+  FdcrStrand,
+  { label: string; className: string }
+> = {
+  Frame: {
+    label: "Frame",
+    className:
+      "border-sky-500/45 bg-sky-500/[0.12] text-sky-200/95",
+  },
+  Diverge: {
+    label: "Diverge",
+    className:
+      "border-violet-500/45 bg-violet-500/[0.12] text-violet-200/95",
+  },
+  Converge: {
+    label: "Converge",
+    className:
+      "border-amber-500/45 bg-amber-500/[0.12] text-amber-100/95",
+  },
+  Represent: {
+    label: "Represent",
+    className:
+      "border-teal-500/45 bg-teal-500/[0.12] text-teal-200/95",
+  },
+};
+
+function FdcrBadge({ strand }: { strand: FdcrStrand }) {
+  const b = FDCR_BADGE[strand];
+  return (
+    <span
+      className={`inline-flex items-center rounded-md border px-2 py-0.5 text-[10px] font-semibold tracking-[0.14em] uppercase font-sans ${b.className}`}
+      title={`FDCR strand: ${b.label}`}
+    >
+      {b.label}
+    </span>
+  );
+}
+
+type CaseStudyLabels = (typeof LABELS)[keyof typeof LABELS];
+
+/* ── Case study body: Results → takeaways (position + lessons merged) → problem → … ─ */
+
+function CaseStudyNarrativeBody({
+  project,
+  L,
+}: {
+  project: CaseStudy;
+  L: CaseStudyLabels;
+}) {
+  const positionImpact = project.positionImpact?.trim();
+  const lessonsText = project.lessons?.trim();
+  const combinedTakeaways = [positionImpact, lessonsText].filter(Boolean).join("\n\n");
+  const hasCtmfs = Boolean(project.ctmfs?.length);
+  /** Methodology lives in CTMF blocks when present; otherwise keep the standalone Design / Methodology section. */
+  const showStandaloneDesign =
+    Boolean(project.design?.trim()) && !project.ctmfs?.length;
+
+  return (
+    <>
+      <FadeIn delay={0.04}>
+        <section>
+          <SectionLabel>{L.results}</SectionLabel>
+          <div className="ecg-panel rounded-xl border border-emerald-600/30 bg-emerald-600/[0.06] relative overflow-hidden">
+            <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-emerald-600/85 via-emerald-500/45 to-transparent" />
+            <div className="pl-6 sm:pl-8 pr-5 sm:pr-7 py-6 flex flex-col gap-4">
+              <p
+                className="text-xl sm:text-2xl font-medium text-emerald-500 leading-snug"
+                style={{ textShadow: "0 0 28px rgba(96,165,250,0.1)" }}
+              >
+                {parseInline(project.results.headline)}
+              </p>
+              <ProseBlock text={project.results.body} />
+            </div>
+          </div>
+        </section>
+      </FadeIn>
+
+      {combinedTakeaways && (
+        <FadeIn>
+          <section>
+            <SectionLabel>{L.takeaways}</SectionLabel>
+            <div className="ecg-panel rounded-xl border border-accent/30 bg-accent/[0.04] relative overflow-hidden">
+              <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-accent-hi/70 via-accent-hi/30 to-transparent" />
+              <div className="pl-6 sm:pl-8 pr-5 sm:pr-7 py-6">
+                <ProseBlock text={combinedTakeaways} />
+              </div>
+            </div>
+          </section>
+        </FadeIn>
+      )}
+
+      <FadeIn>
+        <section>
+          <SectionLabel>{L.problem}</SectionLabel>
+          <ProseBlock text={project.problem} />
+        </section>
+      </FadeIn>
+
+      <FadeIn>
+        <section>
+          <SectionLabel>{L.constraints}</SectionLabel>
+          <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            {project.constraints.map((c) => (
+              <StaggerItem key={c.label}>
+                <ConstraintCard constraint={c} />
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </section>
+      </FadeIn>
+
+      {showStandaloneDesign && project.design && (
+        <FadeIn>
+          <section>
+            <SectionLabel>{L.design}</SectionLabel>
+            <ProseBlock text={project.design} />
+          </section>
+        </FadeIn>
+      )}
+
+      {hasCtmfs && project.ctmfs && (
+        <FadeIn>
+          <section className="flex flex-col gap-8">
+            <SectionLabel>{L.ctmfSection}</SectionLabel>
+            <div className="flex flex-col gap-8">
+              {project.ctmfs.map((ctmf, i) => (
+                <div
+                  key={`${ctmf.title}-${i}`}
+                  className="ecg-panel rounded-xl border border-rim/50 bg-card/50 p-6 sm:p-7 relative overflow-hidden"
+                >
+                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-accent-hi/45 via-accent-hi/15 to-transparent" />
+                  <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between sm:gap-x-4 sm:gap-y-2">
+                    <h2 className="text-lg sm:text-xl font-medium text-ink tracking-tight leading-snug max-w-[min(100%,42rem)]">
+                      {ctmf.title}
+                      <span className="text-ink-muted font-normal"> · {ctmf.category}</span>
+                    </h2>
+                    <FdcrBadge strand={ctmf.fdcr} />
+                  </div>
+                  <ProseBlock text={ctmf.body} />
+                </div>
+              ))}
+            </div>
+          </section>
+        </FadeIn>
+      )}
+
+      {project.iterations?.trim() && (
+        <FadeIn>
+          <section>
+            <SectionLabel>{L.iterations}</SectionLabel>
+            <ProseBlock text={project.iterations} />
+          </section>
+        </FadeIn>
+      )}
+
+      {project.testing && (
+        <FadeIn>
+          <section>
+            <SectionLabel>{L.testing}</SectionLabel>
+            <ProseBlock text={project.testing} />
+          </section>
+        </FadeIn>
+      )}
+    </>
+  );
+}
 
 /* ── Page ─────────────────────────────────────────────────────── */
 
@@ -253,9 +443,10 @@ export default async function CaseStudyPage({
   if (!project) notFound();
 
   const L = LABELS[project.kind];
+  const hasGallery = Boolean(project.images?.length);
 
   return (
-    <main className="max-w-4xl mx-auto px-6 xl:px-8 pt-28 pb-28 flex flex-col gap-12">
+    <main className="mx-auto max-w-6xl px-6 xl:px-8 pt-28 pb-28 flex flex-col gap-12">
 
       {/* ── Back navigation ──────────────────────────────────── */}
       <FadeIn>
@@ -273,7 +464,7 @@ export default async function CaseStudyPage({
       {/* ── Header ───────────────────────────────────────────── */}
       <FadeIn delay={0.04}>
         <header className="flex flex-col gap-5">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-sm text-ink-muted">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-sans text-sm text-ink-muted">
             <span>{project.date}</span>
             <span className="text-rim">·</span>
             {project.teamSize > 1 ? (
@@ -282,23 +473,34 @@ export default async function CaseStudyPage({
               <span>Individual</span>
             )}
             <span className="text-rim">·</span>
-            <span className={`inline-flex items-center gap-1.5 ${project.status === "Completed" ? "text-emerald-400" : "text-accent-hi"}`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${project.status === "Completed" ? "bg-emerald-400" : "bg-accent-hi animate-pulse"}`} />
+            <span className={`inline-flex items-center gap-1.5 ${project.status === "Completed" ? "text-emerald-500" : "text-accent-hi"}`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${project.status === "Completed" ? "bg-emerald-500" : "bg-accent-hi animate-pulse"}`} />
               {project.status}
             </span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl font-bold text-ink tracking-tight leading-tight">
+          <h1 className="text-4xl sm:text-5xl font-medium text-ink tracking-tight leading-tight">
             {project.title}
           </h1>
-          <p className="text-base font-mono text-ink-muted">{project.subtitle}</p>
-          <p className="text-lg text-ink-muted leading-relaxed max-w-3xl">
+          <p className="text-base font-sans text-ink-muted">{project.subtitle}</p>
+          <p className="text-lg text-ink-muted leading-relaxed">
             {project.summary}
           </p>
 
           <div className="flex flex-wrap gap-2">
             {project.tags.map((t) => <Tag key={t} label={t} />)}
           </div>
+
+          {project.ctmfs && project.ctmfs.length > 0 && (
+            <div className="rounded-lg border border-accent/25 bg-accent/[0.04] px-3 py-2.5 sm:px-4 sm:py-3">
+              <p className="text-[10px] font-semibold tracking-[0.16em] uppercase text-accent-hi/90 mb-1">
+                CTMFs
+              </p>
+              <p className="text-xs sm:text-sm text-ink-muted leading-snug font-sans">
+                {project.ctmfs.map((c) => c.title).join(" · ")}
+              </p>
+            </div>
+          )}
 
           {project.links && project.links.length > 0 && (
             <div className="flex flex-wrap gap-3 pt-1">
@@ -312,89 +514,69 @@ export default async function CaseStudyPage({
         </header>
       </FadeIn>
 
-      {/* ── Results / Findings — recruiter hook, shown first ──── */}
-      <FadeIn delay={0.04}>
-        <section>
-          <SectionLabel>{L.results}</SectionLabel>
-          <div className="ecg-panel rounded-xl border border-emerald-500/30 bg-emerald-400/5 relative overflow-hidden">
-            <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-emerald-400/80 via-emerald-400/40 to-transparent" />
-            <div className="pl-6 sm:pl-8 pr-5 sm:pr-7 py-6 flex flex-col gap-4">
-              <p
-                className="text-xl sm:text-2xl font-bold text-emerald-400 leading-snug"
-                style={{ textShadow: "0 0 24px rgba(52,211,153,0.18)" }}
+      <div className="flex flex-col gap-12">
+        <CaseStudyNarrativeBody project={project} L={L} />
+        {hasGallery && project.images && (
+          <FadeIn>
+            <section>
+              <SectionLabel>{L.gallery}</SectionLabel>
+              <ImageGallery images={project.images} />
+            </section>
+          </FadeIn>
+        )}
+      </div>
+
+      <FadeIn>
+        <footer
+          className="mt-4 rounded-xl border border-rim/40 bg-card/30 px-5 py-5 sm:px-6 sm:py-6"
+          aria-label="Academic integrity and teammate attribution"
+        >
+          {project.teamSize > 1 ? (
+            <p className="text-sm leading-relaxed text-ink-muted font-sans">
+              As per the{" "}
+              <a
+                href="https://governingcouncil.utoronto.ca/secretariat/policies/code-behaviour-academic-matters"
+                className="text-accent-hi underline decoration-accent-hi/40 underline-offset-2 hover:decoration-accent-hi"
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                {parseInline(project.results.headline)}
-              </p>
-              <ProseBlock text={project.results.body} />
-            </div>
-          </div>
-        </section>
-      </FadeIn>
-
-      {/* ── The Problem / Research Question ──────────────────── */}
-      <FadeIn>
-        <section>
-          <SectionLabel>{L.problem}</SectionLabel>
-          <ProseBlock text={project.problem} />
-        </section>
-      </FadeIn>
-
-      {/* ── Constraints / Key Parameters ─────────────────────── */}
-      <FadeIn>
-        <section>
-          <SectionLabel>{L.constraints}</SectionLabel>
-          <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {project.constraints.map((c) => (
-              <StaggerItem key={c.label}>
-                <ConstraintCard constraint={c} />
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </section>
-      </FadeIn>
-
-      {/* ── Design / Methodology ─────────────────────────────── */}
-      <FadeIn>
-        <section>
-          <SectionLabel>{L.design}</SectionLabel>
-          <ProseBlock text={project.design} />
-        </section>
-      </FadeIn>
-
-      {/* ── Iterations / Process ─────────────────────────────── */}
-      <FadeIn>
-        <section>
-          <SectionLabel>{L.iterations}</SectionLabel>
-          <ProseBlock text={project.iterations} />
-        </section>
-      </FadeIn>
-
-      {/* ── Testing / Analysis (optional) ────────────────────── */}
-      {project.testing && (
-        <FadeIn>
-          <section>
-            <SectionLabel>{L.testing}</SectionLabel>
-            <ProseBlock text={project.testing} />
-          </section>
-        </FadeIn>
-      )}
-
-      {/* ── Gallery (only when images exist) ─────────────────── */}
-      {project.images && project.images.length > 0 && (
-        <FadeIn>
-          <section>
-            <SectionLabel>{L.gallery}</SectionLabel>
-            <ImageGallery images={project.images} />
-          </section>
-        </FadeIn>
-      )}
-
-      {/* ── Lessons ──────────────────────────────────────────── */}
-      <FadeIn>
-        <section>
-          <SectionLabel>{L.lessons}</SectionLabel>
-          <ProseBlock text={project.lessons} />
-        </section>
+                University of Toronto Code of Academic Behaviour
+              </a>{" "}
+              and the Professional Engineers Ontario Code of Ethics, I acknowledge that this project was completed as part of a team. I attribute shared design
+              work, analysis, prototyping, testing, and documentation that were not solely my own to my
+              teammates:{" "}
+              {project.teammates && project.teammates.length > 0 ? (
+                project.teammates.map((name, i) => (
+                  <span key={`${name}-${i}`}>
+                    {i > 0 && ", "}
+                    <span className="text-ink/90 font-medium">{name}</span>
+                  </span>
+                ))
+              ) : (
+                <>
+                  <span className="text-ink/90 font-medium">[Name 1]</span>,{" "}
+                  <span className="text-ink/90 font-medium">[Name 2]</span>,{" "}
+                  <span className="text-ink/90 font-medium">[Name X]</span>
+                </>
+              )}
+              .
+            </p>
+          ) : (
+            <p className="text-sm leading-relaxed text-ink-muted font-sans">
+              As per the{" "}
+              <a
+                href="https://governingcouncil.utoronto.ca/secretariat/policies/code-behaviour-academic-matters"
+                className="text-accent-hi underline decoration-accent-hi/40 underline-offset-2 hover:decoration-accent-hi"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                University of Toronto Code of Academic Behaviour
+              </a>{" "}
+              and the Professional Engineers Ontario Code of Ethics, I confirm that this project was completed individually and that the work described here is my
+              own except where outside sources are cited.
+            </p>
+          )}
+        </footer>
       </FadeIn>
 
     </main>

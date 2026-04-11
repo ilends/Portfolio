@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "./components/ThemeProvider";
 import { Header } from "./components/Header";
@@ -17,9 +17,26 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const ogImage = {
+  url: "/android-chrome-512x512.png",
+  width: 512,
+  height: 512,
+  alt: "David Angelo — Engineering Science at the University of Toronto",
+} as const;
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0b0f14" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+  ],
+};
+
 export const metadata: Metadata = {
   title: {
-    default: "David Angelo — Engineering Science @ UofT",
+    default: "David Angelo - Engineering Science @ UofT",
     template: "%s | David Angelo",
   },
   description:
@@ -29,6 +46,8 @@ export const metadata: Metadata = {
     "Engineering Science",
     "University of Toronto",
     "UofT",
+    "Clinical Engineering",
+    "Biomedical Design",
     "Biomedical Engineering",
     "Emergency Medicine",
     "Medical Device Design",
@@ -45,16 +64,18 @@ export const metadata: Metadata = {
     locale: "en_CA",
     url: "https://davidangelo.ca",
     siteName: "David Angelo",
-    title: "David Angelo — Engineering Science @ UofT",
+    title: "David Angelo - Engineering Science @ UofT",
     description:
       "Engineering Science student at UofT specialising in biomedical research and emergency medicine. Projects in structural analysis, signal processing, and medical device design.",
+    images: [ogImage],
   },
   twitter: {
-    card: "summary",
-    title: "David Angelo — Engineering Science @ UofT",
+    card: "summary_large_image",
+    title: "David Angelo - Engineering Science @ UofT",
     description:
       "Engineering Science student at UofT specialising in biomedical research and emergency medicine.",
     creator: "@davidangelo",
+    images: [ogImage.url],
   },
   robots: {
     index: true,
@@ -86,26 +107,26 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-page text-ink antialiased">
+      <body className="min-h-screen min-h-[100dvh] bg-page pb-[env(safe-area-inset-bottom,0px)] text-ink antialiased">
         <ThemeProvider>
           {/* Splash screen — z-[9999], only plays once per session */}
           <SplashScreen />
-          {/* Canvas dot grid — fixed, z-0, behind all content */}
+          {/* Graph-paper grid + soft drifting markers (canvas) — fixed, z-0 */}
           <DotGrid />
-          {/* Site content: z-10 keeps it above the canvas */}
+            {/* Site content: z-10 above grid */}
           <div className="relative z-10">
             <Header />
             {children}
             {/* Site footer */}
             <footer className="max-w-5xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-rim/20 mt-4">
-              <span className="font-mono text-xs text-ink-muted/40 tracking-wider select-none">
+              <span className="text-xs text-ink-muted/40 tracking-wide select-none">
                 © {new Date().getFullYear()} David Angelo
               </span>
               <a
                 href="/changelog"
-                className="font-mono text-xs text-ink-muted/40 hover:text-accent-hi transition-colors duration-150 tracking-wider"
+                className="inline-flex min-h-11 items-center px-2 text-xs text-ink-muted/40 transition-colors duration-150 tracking-wide hover:text-accent-hi"
               >
-                changelog · v1.1.0
+                changelog · v1.2.0
               </a>
             </footer>
           </div>

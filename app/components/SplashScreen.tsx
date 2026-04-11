@@ -3,82 +3,47 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const SPLASH_KEY = "da-splash-v1";
+const SPLASH_KEY = "da-splash-v2";
 
-/* ── Wave layers ──────────────────────────────────────────────── */
+/** Same stack as the rest of the site (Geist) — reads close to SF Pro on Apple */
+const splashSans = "font-sans antialiased";
 
-function Waves() {
+/* ── Ambient scatter ────────────────────────────────────────── */
+
+const MARKS = [
+  { x: "8%", y: "18%" },
+  { x: "15%", y: "72%" },
+  { x: "22%", y: "38%" },
+  { x: "78%", y: "25%" },
+  { x: "85%", y: "65%" },
+  { x: "91%", y: "42%" },
+  { x: "68%", y: "82%" },
+  { x: "32%", y: "88%" },
+  { x: "55%", y: "12%" },
+  { x: "44%", y: "60%" },
+];
+
+function AmbientMarks() {
   return (
-    <div className="absolute bottom-0 left-0 right-0 overflow-hidden pointer-events-none">
-      {/* Layer 1 — slowest, most transparent */}
-      <motion.div
-        style={{ position: "absolute", bottom: 0, left: "-10%", right: "-10%" }}
-        animate={{ x: ["0%", "-8%", "0%"] }}
-        transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <svg
-          viewBox="0 0 1440 180"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-          style={{ width: "120%", height: 180, display: "block" }}
+    <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
+      {MARKS.map((m, i) => (
+        <motion.span
+          key={i}
+          className="absolute text-accent-hi/[0.09] font-sans text-xs"
+          style={{ left: m.x, top: m.y }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0.55, 0] }}
+          transition={{
+            delay: 0.4 + i * 0.18,
+            duration: 3,
+            repeat: Infinity,
+            repeatDelay: 4 + i * 0.5,
+            ease: "easeInOut",
+          }}
         >
-          <path
-            d="M0,90 C240,130 480,50 720,90 C960,130 1200,50 1440,90 L1440,180 L0,180 Z"
-            fill="rgba(82,171,152,0.05)"
-          />
-        </svg>
-      </motion.div>
-
-      {/* Layer 2 — medium */}
-      <motion.div
-        style={{ position: "absolute", bottom: 0, left: "-10%", right: "-10%" }}
-        animate={{ x: ["0%", "6%", "0%"] }}
-        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <svg
-          viewBox="0 0 1440 160"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-          style={{ width: "120%", height: 160, display: "block" }}
-        >
-          <path
-            d="M0,70 C360,20 720,120 1080,70 C1260,45 1380,95 1440,70 L1440,160 L0,160 Z"
-            fill="rgba(82,171,152,0.07)"
-          />
-        </svg>
-      </motion.div>
-
-      {/* Layer 3 — fastest, most opaque, closest to viewer */}
-      <motion.div
-        style={{ position: "absolute", bottom: 0, left: "-10%", right: "-10%" }}
-        animate={{ x: ["0%", "-5%", "0%"] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <svg
-          viewBox="0 0 1440 140"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="none"
-          style={{ width: "120%", height: 140, display: "block" }}
-        >
-          <path
-            d="M0,50 C360,100 720,0 1080,50 C1260,75 1380,25 1440,50 L1440,140 L0,140 Z"
-            fill="rgba(43,103,119,0.11)"
-          />
-        </svg>
-      </motion.div>
-
-      {/* Solid wave floor */}
-      <svg
-        viewBox="0 0 1440 80"
-        xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="none"
-        style={{ width: "100%", height: 80, display: "block" }}
-      >
-        <path
-          d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,20 1440,40 L1440,80 L0,80 Z"
-          fill="rgba(82,171,152,0.06)"
-        />
-      </svg>
+          +
+        </motion.span>
+      ))}
     </div>
   );
 }
@@ -91,90 +56,88 @@ export function SplashScreen() {
   useEffect(() => {
     if (sessionStorage.getItem(SPLASH_KEY)) return;
     setShow(true);
-
-    const dismiss = setTimeout(() => {
-      setShow(false);
-      sessionStorage.setItem(SPLASH_KEY, "1");
-    }, 2000);
-
-    return () => clearTimeout(dismiss);
   }, []);
+
+  function dismiss() {
+    window.dispatchEvent(new CustomEvent("splash-open-file"));
+    setShow(false);
+    sessionStorage.setItem(SPLASH_KEY, "1");
+  }
 
   return (
     <AnimatePresence>
       {show && (
         <motion.div
           key="splash"
-          initial={{ y: 0 }}
+          initial={{ opacity: 1 }}
           exit={{
-            y: "-100%",
-            transition: {
-              duration: 0.9,
-              ease: [0.76, 0, 0.24, 1],
-            },
+            opacity: 0,
+            transition: { duration: 0.8, ease: "easeInOut" },
           }}
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden"
-          style={{ backgroundColor: "#0A1118" }}
+          style={{ backgroundColor: "#0b0f14" }}
         >
-          {/* Animated waves */}
-          <Waves />
+          {/* Centre glow — softer wash */}
+          <div
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_62%_52%_at_50%_44%,rgba(96,165,250,0.045),transparent_72%)]"
+            aria-hidden
+          />
+          <AmbientMarks />
 
-          {/* Center content */}
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.65, ease: "easeOut", delay: 0.15 }}
-            className="relative z-10 flex flex-col items-center gap-5"
-          >
-            {/* DA monogram */}
-            <motion.div
-              className="w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-bold tracking-tight shadow-2xl"
+          {/* Centre content — clearer tiers: name / subtitle / CTA */}
+          <div className="relative z-10 flex w-full max-w-lg flex-col items-center px-6 text-center">
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
+              className={`mb-4 whitespace-nowrap sm:mb-5 ${splashSans}`}
               style={{
-                background: "linear-gradient(135deg, #2B6777, #52AB98)",
-                boxShadow: "0 0 32px rgba(82,171,152,0.18), 0 0 0 3px rgba(82,171,152,0.10)",
+                fontWeight: 600,
+                fontSize: "clamp(3.2rem, 10vw, 7rem)",
+                lineHeight: 1.06,
+                letterSpacing: "-0.03em",
+                background: "linear-gradient(130deg, #ffffff 35%, #60a5fa 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
               }}
-              animate={{
-                boxShadow: [
-                  "0 0 32px rgba(82,171,152,0.18), 0 0 0 3px rgba(82,171,152,0.10)",
-                  "0 0 48px rgba(82,171,152,0.28), 0 0 0 6px rgba(82,171,152,0.06)",
-                  "0 0 32px rgba(82,171,152,0.18), 0 0 0 3px rgba(82,171,152,0.10)",
-                ],
-              }}
-              transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
             >
-              DA
-            </motion.div>
+              David Angelo
+            </motion.h1>
 
-            {/* Name */}
-            <div className="text-center">
-              <p
-                className="text-2xl font-bold tracking-tight"
-                style={{ color: "#C8D8E4" }}
-              >
-                David Angelo
-              </p>
-              <p
-                className="text-[11px] font-mono tracking-[0.22em] uppercase mt-1"
-                style={{ color: "rgba(82,171,152,0.55)" }}
-              >
-                Engineering Science · UofT
-              </p>
-            </div>
-
-            {/* Progress bar */}
-            <div
-              className="w-48 rounded-full overflow-hidden"
-              style={{ height: 2, backgroundColor: "rgba(26,48,64,0.8)" }}
+            <motion.p
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, ease: "easeOut", delay: 0.5 }}
+              className={`mb-10 whitespace-nowrap text-center text-[clamp(12px,3vw,14px)] font-medium uppercase leading-relaxed tracking-[0.1em] text-sky-300/55 sm:mb-11 sm:tracking-[0.12em] ${splashSans}`}
             >
-              <motion.div
-                className="h-full rounded-full"
-                style={{ backgroundColor: "#52AB98" }}
-                initial={{ width: "0%" }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 1.85, ease: "easeInOut" }}
-              />
-            </div>
-          </motion.div>
+              Engineering Science · University of Toronto
+            </motion.p>
+
+            {/*
+              Real transparency: no gradient on the button itself — a transparent child on top of
+              a gradient parent still shows the parent’s paint. One layer + border only = splash shows through.
+            */}
+            <motion.button
+              type="button"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, ease: "easeOut", delay: 0.92 }}
+              onClick={dismiss}
+              whileTap={{ scale: 0.99 }}
+              className={`relative inline-flex min-h-[2.65rem] min-w-[10.25rem] items-center justify-center rounded-full border-2 border-blue-500/50 bg-transparent px-10 py-2.5 text-center text-[12px] font-medium uppercase tracking-[0.16em] text-blue-200/90 transition-[border-color,background-color,color] duration-200 hover:border-blue-400/75 hover:bg-blue-500/[0.12] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/55 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0f14] sm:text-[13px] ${splashSans}`}
+            >
+              Open File
+            </motion.button>
+          </div>
+
+          <motion.div
+            className="absolute bottom-0 left-0 right-0 h-px"
+            style={{ background: "linear-gradient(to right, transparent, rgba(96,165,250,0.14), transparent)" }}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 1.4, ease: "easeInOut", delay: 0.3 }}
+          />
         </motion.div>
       )}
     </AnimatePresence>

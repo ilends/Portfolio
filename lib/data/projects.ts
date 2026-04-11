@@ -30,6 +30,20 @@ export type ProjectImage = {
   caption?: string;
 };
 
+/** Frame · Diverge · Converge · Represent (Praxis design process strands) */
+export type FdcrStrand = "Frame" | "Diverge" | "Converge" | "Represent";
+
+/** Praxis CTMF taxonomy (concept / tool / model / framework), independent of FDCR strand. */
+export type CtmfCategory = "Concept" | "Tool" | "Model" | "Framework";
+
+export type CtmfBlock = {
+  title: string;
+  fdcr: FdcrStrand;
+  category: CtmfCategory;
+  /** Prose: evidence, assessment, values, bias awareness, lessons (same format as other case-study fields). */
+  body: string;
+};
+
 export type CaseStudy = {
   slug: string;
   title: string;
@@ -37,21 +51,29 @@ export type CaseStudy = {
   date: string;
   tags: string[];
   teamSize: number;
+  /** Full names for the academic attribution footer when `teamSize > 1`. Set per project below in `CASE_STUDIES`. */
+  teammates?: readonly string[];
   status: "Completed" | "In Progress" | "Planned";
   summary: string;
   links?: ProjectLink[];
-  /** "design" → Problem/Constraints/Design/Iterations/Testing/Results/Lessons
-      "research" → Research Question/Key Parameters/Methodology/Process/Analysis/Findings/Lessons */
+  /** "design" → Problem / Constraints / (Design or CTMFs) / Iterations / …
+      "research" → Research Question / Key Parameters / Methodology / … */
   kind: "design" | "research";
   problem: string;
   constraints: Constraint[];
-  design: string;
-  iterations: string;
+  /** Omit when `ctmfs` carries the methodology (typical for Praxis design projects). */
+  design?: string;
+  /** Omit when iteration narrative lives in CTMFs (e.g. CIV102) or you only need other sections. */
+  iterations?: string;
   testing?: string;
   results: {
     headline: string;
     body: string;
   };
+  /** How this project refined your position as an engineering designer (optional; design portfolio). */
+  positionImpact?: string;
+  /** Explicit CTMFs with FDCR strand; optional until populated per project. */
+  ctmfs?: CtmfBlock[];
   lessons: string;
   images?: ProjectImage[];
 };
@@ -70,6 +92,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     date: "Sep – Dec 2025",
     tags: ["Fusion 360", "Human Factors", "Iterative Prototyping", "Ergonomic Design"],
     teamSize: 5,
+    teammates: ["João Assad", "Jeffrey Zhu", "Alvin Park", "Keetahn Park"],
     status: "Completed",
     kind: "design",
     summary:
@@ -90,14 +113,32 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: "Durability (FOS)", value: "≥ 3×", unit: "operational load", rationale: "Must survive 3× operational force without failure." },
     ],
 
-    design:
-      "Initial analysis of existing reference designs revealed a critical flaw: fixed wall hooks exposed the contaminated side and lacked portability, while portable hooks placed the uncontaminated hand dangerously close to hazardous surfaces. Furthermore, no existing reference design reliably inverted the glove to contain contaminants. To avoid anchoring bias, we utilized Lotus Blossom and Morph charts to isolate sub-functions (doffing mechanism, mounting, disposal) before synthesizing full concepts.",
+    ctmfs: [
+      {
+        title: "Needs → Goals → Objectives (NGO)",
+        fdcr: "Frame",
+        category: "Framework",
+        body:
+          "We used the Needs $\\rightarrow$ Goals $\\rightarrow$ Objectives (NGO) framework to structure our design brief, defining a \"safer\" doffing method through establishing constraints (shown above), which were backed by secondary research. This provided our team with shared, measurable requirements to ground our evaluations. However, while the NGO captured physical thresholds, it failed to quantify the high-stress first responders experience during emergencies. In future projects, I will use this framework to establish technical requirements, but I will actively ensure that psychological and environmental constraints are explicitly written into the objectives before prototyping begins. This reinforces my belief that engineering models only gain true meaning when validated by the real-world constraints of the communities using them.",
+      },
+      {
+        title: "Morphological charts",
+        fdcr: "Diverge",
+        category: "Tool",
+        body:
+          "We used Lotus Blossom and \"I wish\" statements to deconstruct the doffing problem into sub-functions, then recombined them with a Morphological Chart. These tools were effective in the diverging phase because they forced us to design around elementary actions rather than complete mechanisms. This broke our anchoring bias toward the slicer concept and introduced the tape approach. The exercise showed me that accessible designs often emerge from optimizing a single physical interaction rather than building complex machines. However, the chart also produced highly theoretical combinations that ignored realities like moisture and friction, leading to early failures such as the air blower prototype. I would use this method again to expand the design space, but pair it with earlier low-fidelity testing to eliminate ideas that only work on paper.",
+      },
+      {
+        title: "Decision matrices",
+        fdcr: "Converge",
+        category: "Tool",
+        body:
+          "To converge on our final recommendation, we used decision matrices: a measurement matrix to quantify prototype performance across proxy tests, followed by a two-stage Pugh chart comparing concepts against the Hook baseline. Again, this mitigated anchoring bias through actual data-driven decision making. However, the matrix initially hid a critical flaw: the Glove Slicer scored well numerically but introduced major risks due to its exposed blade. Recognizing this limitation, we overrode the matrix to select the zero-manufacturing-cost tape tab, a solution better suited to the time-pressured realities of emergency response. The matrix anchored our convergence in data, but informed judgment was necessary to choose the final solution, which connects to how I approach engineering design.",
+      },
+    ],
 
     iterations:
-      "The Hook: Scaled-down iterations focused on portability failed the 3x operational load durability requirement and demanded excessive operational force (up to 51.47 N).\n\nThe Glove Slicer: Underwent four iterations to produce a dual-blade cutting mechanism with a shielded access slot to ensure fingertip safety. It outperformed hand-doffing but required a rigid belt mount. This limits usability for unbelted personnel in dynamic clinical settings. Eliminated after holistic evaluation.\n\nThe **Tape design** went through three focused iterations:\n• Clear scotch tape: Functional, but the transparent tab was slow to locate under time pressure.\n• 3M 401+ masking tape: Improved visibility and moisture resistance yielded a 1.31 s faster doffing time.\n• Thumb positioned tab: Moving the tab parallel to the thumb optimized removal mechanics and ensured the peak operational force remained a highly accessible 15.21 N.",
-
-    testing:
-      "Prototypes underwent rigorous proxy testing, including fluorescent dye-contact rates over 20 trials, measured splatter distance, and continuous load-to-failure structural testing. Results were quantified in a Measurement Matrix and a two-stage Pugh chart, using the standard Hook as the initial baseline before evaluating the Slicer and Tape holistically.",
+      "The **tape-tab design** went through three focused iterations (Hook and Slicer arcs are summarized under decision matrices in the CTMFs above):\n• Clear scotch tape: Functional, but the transparent tab was slow to locate under time pressure.\n• 3M 401+ masking tape: Improved visibility and moisture resistance yielded a 1.31 s faster doffing time.\n• Thumb positioned tab: Moving the tab parallel to the thumb optimized removal mechanics and ensured the peak operational force remained a highly accessible 15.21 N.",
 
     results: {
       headline: "8.82 s avg. doffing time · 15.21 N actuation force · effectively zero manufacturing cost",
@@ -105,26 +146,20 @@ export const CASE_STUDIES: CaseStudy[] = [
     },
 
     lessons:
-      "The most significant struggle in this project was overcoming the engineering bias toward complex, hardware-heavy solutions. Early diverging produced over-engineered concepts like air blowers and water pumps, which catastrophically failed in testing because they could not overcome the friction of moist skin and introduced uncontrollable fluid splatter. We learned that in high-stress medical environments, introducing new hardware inherently introduces new failure modes. The ultimate takeaway was that true accessible design does not always mean building a better machine. Sometimes, it requires optimizing a fundamental physical interaction to make it safer and completely frictionless.",
+      "The hardest part of this project was overcoming the urge to over-engineer. First responders operate under bounded rationality, they don't have the cognitive bandwidth to fumble with complex gadgets in a crisis. By stepping back from theoretical models, we realized that optimizing a fundamental physical interaction with a simple tape-tab was the true accessible solution. This fundamentally impacted my engineering position: for a solution to actually serve society long-term, it must be sustainable.",
 
+    /* Gallery: morph-chart, Pugh chart (convergence), slicer CAD, tape final. */
     images: [
       {
-        src: "/images/glove-doffing/whiteboard-sketches.png",
-        alt: "Early whiteboard ideation session, Praxis Group 40, Oct 22 2025",
-        caption:
-          "Early ideation (Oct 22 2025). Sketches include five concepts that are visible in rough form on the whiteboard.",
+        src: "/images/glove-doffing/morph-chart.png",
+        alt: "Hand-drawn morphological chart for glove doffing: function rows and sketched options per column",
+        caption: "Morph chart — sub-functions × concept combinations (diverge).",
       },
       {
-        src: "/images/glove-doffing/lotus-blossom.png",
-        alt: "Lotus Blossom diverging activity for the glove doffing opportunity",
+        src: "/images/glove-doffing/pugh-chart.png",
+        alt: "Pugh chart: Tape vs Slicer vs Hook on contact, splatter, force, time, and mass",
         caption:
-          "Lotus Blossom diverging activity to break the problem into isolated sub-functions and reduce anchoring bias toward existing hook designs.",
-      },
-      {
-        src: "/images/glove-doffing/hook-iterations.png",
-        alt: "Four 3D-printed iterations of the hook design",
-        caption:
-          "Four 3D-printed iterations of the portable hook were tested. Some variations had major safety concerns due to exposed blades.",
+          "Pugh Chart of Tape and Slicer compared with hook. Metrics with better performance in green, worse in red, same in yellow.",
       },
       {
         src: "/images/glove-doffing/slicer-fusion-side.png",
@@ -132,23 +167,17 @@ export const CASE_STUDIES: CaseStudy[] = [
         caption:
           "Fusion 360 model of the Glove Slicer (side view). Iterated on blade depth and slit width to make accidental finger contact geometrically impossible.",
       },
-      {
-        src: "/images/glove-doffing/slicer-fusion-front.png",
-        alt: "Fusion 360 CAD model of the glove slicer — belt-mount view",
-        caption:
-          "Glove Slicer (belt-mount view). The two legs straddle a belt loop and the cutting slit faces upward.",
-      },
+      // {
+      //   src: "/images/glove-doffing/slicer-fusion-front.png",
+      //   alt: "Fusion 360 CAD model of the glove slicer — belt-mount view",
+      //   caption:
+      //     "Glove Slicer (belt-mount view). The two legs straddle a belt loop and the cutting slit faces upward.",
+      // },
       {
         src: "/images/glove-doffing/tape-final.png",
         alt: "Final tape design — green 3M 401+ masking tape on the inner wrist cuff",
         caption:
           "Final design: 3M 401+ masking tape positioned at the thumb cuff.",
-      },
-      {
-        src: "/images/glove-doffing/alpha-release.png",
-        alt: "Group 40 at the Alpha Release mid-semester design showcase",
-        caption:
-          "Group 40 at the Alpha Release presentation. The poster shows the diverging process, five prototype concepts with some visible on the table, and early proxy test data.",
       },
     ],
   },
@@ -161,6 +190,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     date: "Nov – Dec 2025",
     tags: ["Python", "Structural Engineering", "Statics", "Safety Analysis"],
     teamSize: 4,
+    teammates: ["Karan Chawla", "Chris Peng", "Angela Xiao"],
     status: "Completed",
     kind: "design",
     summary:
@@ -181,14 +211,32 @@ export const CASE_STUDIES: CaseStudy[] = [
       { label: "Min Factor of Safety", value: "2.49", unit: "(compression)", rationale: "Lowest of 8 FOS values under Load Case 2 — compression governs." },
     ],
 
-    design:
-      "Before touching any matboard, we calculated localized stress concentrations and evaluated the cross-section against tensile failure, compressive failure, material shear, glue shear, and 3 distinct plate buckling modes. We then parameterised the cross-section in Python: top flange width and thickness, web height, glue tab widths, diaphragm spacing, and automated all eight factor-of-safety calculations. This converted iteration from a hand-calculation marathon into a trade-off table comparison. The final design was modeled using Onshape and cut out from a single 1020 x 810 mm matboard sheet.",
-
-    iterations:
-      "**Design 0** (the course reference) failed immediately under Load Case 1 due to Case 1 plate buckling in the restrained top flange.\n\n**Iteration 1**: Doubled top flange (1.27 → 2.54 mm), removed bottom flange, extended glue tab to 80 mm across the full web span. All eight FOS ≥ 1.0. Weaknesses remaining: compression, tension, shear buckling.\n\n**Iteration 2**: Raised web height (78.73 → 100 mm); cut diaphragm spacing (400 → 100 mm). All three weaknesses improved simultaneously.\n\n**Iteration 3**: Wider flange (100 → 120 mm). Compression improved but Case 2 buckling dropped by a factor of four. Material in the horizontal plane is far less efficient than in the vertical plane. Reverted.\n\n**Iteration 4**: Flange back to 100 mm; web to 120 mm. Most metrics improved; web height locked at 120 mm.\n\n**Final design**: Zoned glue tabs; 77.46 mm centrally (bending-dominant) and 30 mm combined in the outer thirds (shear-dominant), matching the moment envelope and allowing all pieces to fit onto the physical matboard sheet.",
+    ctmfs: [
+      {
+        title: "Iteration and refinement",
+        fdcr: "Converge",
+        category: "Concept",
+        body:
+          "**Iteration and refinement** was the core converging move for this bridge. Before fabrication, we cycled through five major computational iterations: each loop adjusted flange build-up, web height, diaphragm spacing, and glue tabs while a Python script re-evaluated eight failure modes under Load Case 1 ($400$ N) and Load Case 2 ($452$ N). Shear and bending envelopes were plotted so every change could be traced to a specific governing mode.\n\nConstruction started only after all modes met the team’s convergence criteria for that iteration. (Connect explicitly to splice behavior and physical testing in lessons: still to sharpen.)",
+      },
+      {
+        title: "Trade-offs",
+        fdcr: "Converge",
+        category: "Concept",
+        body:
+          "**Trade-offs** appeared whenever we bought capacity in one failure mode and risked another. Widening the flange improved compression in one step but tanked Case 2 plate buckling badly enough that we reverted. The spreadsheet made those exchanges legible: vertical material tended to help bending stiffness and shear buckling more than horizontal area.\n\nThe final glue-tab zoning matched the moment envelope: longer tabs in the bending-dominated midspan and shorter tabs toward the supports where shear dominated, while still fitting the full layout on one matboard sheet. (Values: efficiency vs. constructability to be articulated.)",
+      },
+      {
+        title: "CAD (Onshape)",
+        fdcr: "Represent",
+        category: "Tool",
+        body:
+          "**CAD (Onshape)** represented the embodied design for fabrication. We modeled the box-girder in multi-view assemblies so diaphragm spacing, grain direction, and part boundaries stayed aligned with the Python sign-off. Before touching matboard, we also calculated localized stress concentrations and checked the cross-section against tensile failure, compressive failure, material shear, glue shear, and three plate buckling modes at the parameter values we planned to cut.\n\nThe cutting diagram and sheet layout flowed from that model so the physical bridge matched the analysed cross-section instead of drifting during ad hoc drafting. (Screenshots and captions in visual evidence below; tie captions to claims here as you revise.)",
+      },
+    ],
 
     testing:
-      "All structural analysis was conducted in Python before any fabrication. The script plotted shear force and bending moment envelopes and outputted all eight factors of safety for any given cross-section. Each iteration was tested against both Load Case 1 (400 N) and Load Case 2 (452 N). Physical construction followed only after computational sign-off on every failure mode. The final design was tested against increasing point loads: 133 N, 266 N, 400 N, 450 N, failing at 520 N andsustaining a total load of 1250 N.",
+      "All structural analysis was conducted in Python before any fabrication. The script plotted shear force and bending moment envelopes and outputted all eight factors of safety for any given cross-section. Each iteration was tested against both Load Case 1 (400 N) and Load Case 2 (452 N). Physical construction followed only after computational sign-off on every failure mode. The final design was tested against increasing point loads: 133 N, 266 N, 400 N, 450 N, failing at 520 N and sustaining a total load of 1250 N.",
 
     results: {
       headline: "Compression governed at FOS 2.49 · Physical Testing Validates 450 N Sustained Load",
@@ -391,6 +439,60 @@ export const CASE_STUDIES: CaseStudy[] = [
           "DCT (black) vs FFT (red) reconstruction against the original signal (green). DCT values stay close to the line; FFT values deviate visibly.",
       },
     ],
+  },
+  {
+    slug: "placeholder-praxis-ii-case-study",
+    title: "Praxis II Engineering Design Project",
+    subtitle: "ESC102 · University of Toronto",
+    date: "Feb – Apr 2026",
+    tags: ["Engineering Design", "Human Factors", "Verification & Validation", "Stakeholder Engagement"],
+    teamSize: 4,
+    teammates: ["Ethan Li", "Xiahaotian (Sky) Su", "Noel Puthoor"],
+    status: "Completed",
+    kind: "design",
+    summary:
+      "Placeholder case study. Full project narrative, validation data, and gallery are being finalized for the next update.",
+    links: [
+      { label: "Case Study Draft", href: "#", type: "external" },
+    ],
+    problem:
+      "Placeholder text. This section will describe the stakeholder problem context, design objective, and why the project mattered in a real use environment.",
+    constraints: [
+      { label: "Primary Constraint", value: "TBD", unit: "", rationale: "Placeholder text pending finalized report." },
+      { label: "Secondary Constraint", value: "TBD", unit: "", rationale: "Placeholder text pending finalized report." },
+      { label: "Validation Goal", value: "TBD", unit: "", rationale: "Placeholder text pending finalized report." },
+    ],
+    ctmfs: [
+      {
+        title: "Stakeholder assessment",
+        fdcr: "Frame",
+        category: "Framework",
+        body:
+          "Draft. Document how explicit and implicit stakeholders were identified, how their needs were translated into requirements, and what evidence supports those choices. Connect to scoping up or down if the team changed the problem boundary after feedback.",
+      },
+      {
+        title: "Verification vs. validation",
+        fdcr: "Converge",
+        category: "Concept",
+        body:
+          "Draft. Separate what was verified in models, benches, or prototypes from what was validated with stakeholders or realistic use. Cite metrics, protocols, and outcomes.",
+      },
+      {
+        title: "Poster / one-pager design tools",
+        fdcr: "Represent",
+        category: "Tool",
+        body:
+          "Draft. Explain layout, grouping, hierarchy, and signal-to-noise choices on the showcase poster or one-pager so a reviewer can follow the engineering argument quickly.",
+      },
+    ],
+    iterations:
+      "Placeholder text. This section will document iteration decisions, key trade-offs, and why specific concepts were advanced or rejected.",
+    results: {
+      headline: "Placeholder results headline",
+      body: "Placeholder text. Final quantified outcomes and interpretation will be inserted here.",
+    },
+    lessons:
+      "Placeholder text. This section will capture key engineering lessons and planned next improvements.",
   },
 ];
 
