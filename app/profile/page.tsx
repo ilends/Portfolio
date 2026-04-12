@@ -49,7 +49,7 @@ export default function ProfilePage() {
 
               <div className="relative mt-10 h-64 w-64 overflow-hidden rounded-full border-2 border-accent-hi/50 bg-card shadow-[0_0_28px_-10px_rgba(96,165,250,0.26)]">
                 <Image
-                  src="/api/image/portrait"
+                  src="/images/profile/portrait.png"
                   alt="David Angelo"
                   width={256}
                   height={256}
@@ -137,7 +137,7 @@ export default function ProfilePage() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
               <div className="min-w-0">
                 <ExpandablePhoto
-                  src="/api/image/montreal"
+                  src="/images/profile/montreal-trip.jpg"
                   alt="Montreal — pedestrian street opening toward the downtown skyline on a clear day"
                   caption="Montreal trip - Visiting McGill University! Summer 2025."
                   className="w-full"

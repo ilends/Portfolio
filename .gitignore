@@ -33,7 +33,7 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
-# private assets — never commit PDFs or sensitive files
+# private assets — never commit PDFs or sensitive files (PDFs served via /api/pdf stay local unless you opt in)
 /private
 
 # vercel
