@@ -9,92 +9,88 @@
   --color-ink-muted:  var(--ink-muted);
   --color-accent:     var(--accent);
   --color-accent-hi:  var(--accent-hi);
+  --color-accent-soft: var(--accent-soft);
   --color-rim:        var(--rim);
   --font-sans:        var(--font-geist-sans);
   --font-mono:        var(--font-geist-mono);
 }
 
-/* ── Light mode ───────────────────────────────────────────────── */
+/* ── Light mode — steel / cornflower blues (readable on white) ─── */
 :root {
-  --page:             #f3edd9;
-  --surface:          #ebe4cc;
-  --card:             #e3dbc4;
-  --ink:              #0b1929;
-  --ink-muted:        #3d5f78;
-  --accent:           #2B6777;
-  --accent-hi:        #38A3A5;
-  --rim:              #b8c9d4;
-  --ecg-glow:         rgba(43, 103, 119, 0.10);
-  --ecg-border-hover: rgba(43, 103, 119, 0.26);
-  --grid-minor:       rgba(43, 103, 119, 0.04);
-  --grid-major:       rgba(43, 103, 119, 0.07);
-  --ekg-line:         rgba(43, 103, 119, 0.06);
+  --page:             #ffffff;
+  --surface:          #ffffff;
+  --card:             #ffffff;
+  --ink:              #0f172a;
+  --ink-muted:        #475569;
+  /* Gradient family: dark #4A76A8 · mid #5B8CC4 · light #6EA2E0 */
+  --accent:           #4a76a8;
+  --accent-hi:        #5b8cc4;
+  --accent-soft:      #6ea2e0;
+  --rim:              #d8e4f0;
+  --ecg-border-hover: rgba(74, 118, 168, 0.28);
+  --grid-minor:       rgba(74, 118, 168, 0.032);
+  --grid-major:       rgba(74, 118, 168, 0.055);
+  --ekg-line:         rgba(74, 118, 168, 0.045);
 }
 
 /* ── Dark mode ────────────────────────────────────────────────── */
 .dark {
-  --page:             #0A1118;
-  --surface:          #0D1525;
-  --card:             #112033;
-  --ink:              #C8D8E4;
-  --ink-muted:        #527a96;
-  --accent:           #2B6777;
-  --accent-hi:        #52AB98;
-  --rim:              #1a3040;
-  --ecg-glow:         rgba(82, 171, 152, 0.08);
-  --ecg-border-hover: rgba(82, 171, 152, 0.22);
-  --grid-minor:       rgba(82, 171, 152, 0.03);
-  --grid-major:       rgba(82, 171, 152, 0.055);
-  --ekg-line:         rgba(82, 171, 152, 0.07);
+  --page:             #0b0f14;
+  --surface:          #121826;
+  --card:             #1a2332;
+  --ink:              #eef2f7;
+  --ink-muted:        #94a3b8;
+  --accent:           #3b82f6;
+  --accent-hi:        #60a5fa;
+  --accent-soft:      #7eb3f0;
+  --rim:              #2a3441;
+  --ecg-border-hover: rgba(96, 165, 250, 0.15);
+  --grid-minor:       rgba(96, 165, 250, 0.017);
+  --grid-major:       rgba(96, 165, 250, 0.031);
+  --ekg-line:         rgba(96, 165, 250, 0.034);
 }
 
 /* ── Base ─────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
   background-color: var(--page);
   color: var(--ink);
   font-family: var(--font-geist-sans), system-ui, sans-serif;
-  /* No CSS background dots — replaced by graph-paper DotGrid */
+  /* Graph-paper grid via DotGrid (no canvas / dots) */
 }
 
-/* ── Radar pulse: status indicator dot ───────────────────────── */
-@keyframes radar-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(82, 171, 152, 0.45);
-  }
-  70% {
-    box-shadow: 0 0 0 6px rgba(82, 171, 152, 0);
-  }
+/* Kill UA default yellow <mark> if used elsewhere */
+mark {
+  background: transparent;
+  color: inherit;
+}
+
+/* ── Status dot: subtle opacity only (no ring / “radar” glow) ─── */
+@keyframes status-breathe {
+  0%,
   100% {
-    box-shadow: 0 0 0 0 rgba(82, 171, 152, 0);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.65;
   }
 }
 
 .radar-dot {
-  animation: radar-pulse 2.2s ease-out infinite;
+  animation: status-breathe 2.8s ease-in-out infinite;
 }
 
-/* ── ECG heartbeat: dashboard panel hover ────────────────────── */
-@keyframes ecg-pulse {
-  0%, 100% {
-    box-shadow: 0 0 0 0 transparent;
-  }
-  50% {
-    box-shadow: 0 0 6px 1px var(--ecg-glow);
-  }
-}
-
+/* ── Panel hover: flat clinical border, no pulsing glow ───────── */
 .ecg-panel {
-  transition: border-color 0.25s ease, box-shadow 0.25s ease,
-    background-color 0.2s ease;
+  transition: border-color 0.25s ease, background-color 0.2s ease;
 }
 
 .ecg-panel:hover {
   border-color: var(--ecg-border-hover);
-  animation: ecg-pulse 2.5s ease-in-out infinite;
 }
 
 /* ── Smooth theme transitions ─────────────────────────────────── */

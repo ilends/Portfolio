@@ -10,10 +10,16 @@ import path from "path";
 const PDF_MAP: Record<string, string> = {
   "glove-doffing":  "glove-doffing-report.pdf",
   "bridge":         "bridge-design-report.pdf",
+  "civ102-handout": "civ102-bdp-handout-v2.pdf",
   "dolphin-kick":   "math-ia-dolphin-kick.pdf",
   "dct-jpeg":       "math-ee-dct-jpeg.pdf",
+  /* Place your position statement at private/reports/position-statement.pdf */
+  "position":       "position-statement.pdf",
+  "position-old":   "position-old.pdf",
   /* Place your resume at private/reports/resume.pdf */
   "resume":         "resume.pdf",
+  "praxis-ii-poster":    "praxis-ii-team05-poster.pdf",
+  "praxis-ii-one-pager": "praxis-ii-team05-one-pager.pdf",
 };
 
 export async function GET(

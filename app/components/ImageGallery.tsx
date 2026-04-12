@@ -4,10 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import type { ProjectImage } from "@/lib/data/projects";
 
 /* ── Blob-URL obfuscation ─────────────────────────────────────────
-   Every image is fetched once, converted to an object URL, and
-   rendered from that blob. The Elements panel shows only
-   blob:https://…  — no path, no filename. Blobs are revoked on
-   component unmount to avoid memory leaks.
+   Images are fetched once, converted to object URLs, and rendered
+   from that blob. Blobs are revoked on unmount.
 ──────────────────────────────────────────────────────────────── */
 
 function useBlobUrls(images: ProjectImage[]) {
@@ -27,7 +25,7 @@ function useBlobUrls(images: ProjectImage[]) {
             created.push(u);
             return u;
           })
-          .catch(() => img.src) // fallback to real src if fetch fails
+          .catch(() => img.src)
       )
     ).then((resolved) => {
       if (!revoked) setUrls(resolved);
@@ -42,15 +40,18 @@ function useBlobUrls(images: ProjectImage[]) {
   return urls;
 }
 
-/* ── Context-menu / drag prevention ──────────────────────────── */
-
 const noCtx = (e: React.MouseEvent) => e.preventDefault();
 
-/* ── Gallery component ────────────────────────────────────────── */
+type ImageGalleryProps = {
+  images: ProjectImage[];
+  /** Smaller thumbnails and tighter grid (e.g. under CTMF blocks). Lightbox behaviour unchanged. */
+  compact?: boolean;
+};
 
-export function ImageGallery({ images }: { images: ProjectImage[] }) {
+export function ImageGallery({ images, compact = false }: ImageGalleryProps) {
   const blobUrls = useBlobUrls(images);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
+  const [thumbError, setThumbError] = useState<Record<number, boolean>>({});
 
   const close = useCallback(() => setSelectedIdx(null), []);
 
@@ -74,56 +75,84 @@ export function ImageGallery({ images }: { images: ProjectImage[] }) {
 
   if (!images?.length) return null;
 
-  const gridClass =
-    images.length === 1
-      ? "grid-cols-1"
-      : images.length === 2
-      ? "grid-cols-1 sm:grid-cols-2"
-      : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+  /** One CTMF image (e.g. composite grid): use natural aspect + wide cap so we do not letterbox inside a tiny square. */
+  const singleCompact = compact && images.length === 1;
+
+  const gridClass = compact
+    ? singleCompact
+      ? "grid-cols-1 w-full"
+      : images.length >= 3
+        ? "grid-cols-2 sm:grid-cols-3 max-w-2xl mx-auto"
+        : "grid-cols-1 sm:grid-cols-2 max-w-xl mx-auto"
+    : images.length === 1
+      ? "grid-cols-1 max-w-lg mx-auto"
+      : images.length >= 3
+        ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto"
+        : "grid-cols-1 sm:grid-cols-2 max-w-3xl mx-auto";
+
+  /** Square thumbs for multi-image compact rows; full-width cap for single composite. */
+  const thumbFrameSquareCompact =
+    "mx-auto aspect-square w-full max-w-[min(100%,152px)] sm:max-w-[172px]";
+  const thumbFrameSquareDefault =
+    "mx-auto aspect-square w-full max-w-[min(100%,200px)] sm:max-w-[236px]";
+
+  const gridGap = compact ? "gap-2 sm:gap-2.5" : "gap-2.5 sm:gap-3";
 
   const selectedImage = selectedIdx !== null ? images[selectedIdx] : null;
-  const selectedBlob  = selectedIdx !== null ? (blobUrls[selectedIdx] ?? images[selectedIdx].src) : null;
+  const selectedBlob =
+    selectedIdx !== null ? (blobUrls[selectedIdx] ?? images[selectedIdx].src) : null;
 
   return (
     <>
-      {/* ── Thumbnail grid ──────────────────────────────────── */}
-      <div className={`grid ${gridClass} gap-4 mt-4`}>
+      <div className={`grid ${gridClass} ${gridGap}`}>
         {images.map((img, i) => {
           const displaySrc = blobUrls[i] ?? null;
           return (
-            <figure key={i} className="flex flex-col gap-2">
+            <figure
+              key={i}
+              className={`flex flex-col ${singleCompact ? "w-full max-w-xl mx-auto gap-2" : `items-center ${compact ? "gap-1" : "gap-1.5 sm:gap-2"}`}`}
+            >
               <button
+                type="button"
                 onClick={() => setSelectedIdx(i)}
-                className="group relative w-full aspect-video rounded-xl overflow-hidden border border-rim/50 bg-surface cursor-zoom-in focus-visible:outline-2 focus-visible:outline-accent-hi"
-                aria-label={`Enlarge: ${img.alt}`}
+                className={
+                  singleCompact
+                    ? "group relative flex w-full cursor-zoom-in items-center justify-center overflow-hidden rounded-lg border border-rim/45 bg-black/20 p-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-hi"
+                    : `group relative flex cursor-zoom-in items-center justify-center overflow-hidden rounded-lg border border-rim/45 bg-black/20 p-1.5 sm:p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-hi ${compact ? thumbFrameSquareCompact : thumbFrameSquareDefault}`
+                }
+                aria-label={`Open larger: ${img.alt}`}
               >
-                {displaySrc ? (
+                {displaySrc && !thumbError[i] ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
                     src={displaySrc}
                     alt={img.alt}
                     draggable={false}
                     onContextMenu={noCtx}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03] select-none pointer-events-none"
+                    onError={() =>
+                      setThumbError((prev) => ({ ...prev, [i]: true }))
+                    }
+                    className={
+                      singleCompact
+                        ? "w-full h-auto max-h-[min(20rem,40vh)] object-contain object-center select-none transition-transform duration-300 group-hover:scale-[1.01]"
+                        : "h-full w-full max-h-full max-w-full object-contain object-center select-none transition-transform duration-300 group-hover:scale-[1.02]"
+                    }
                   />
+                ) : displaySrc && thumbError[i] ? (
+                  <div className="px-4 py-8 text-center text-sm text-ink-muted">Image unavailable</div>
                 ) : (
-                  /* Skeleton while blobs load */
-                  <div className="absolute inset-0 bg-surface animate-pulse" />
+                  <div className="h-full w-full animate-pulse rounded-md bg-surface/80" />
                 )}
-
-                {/* Enlarge hint */}
-                <span className="absolute inset-0 flex items-end justify-end p-3 pointer-events-none">
-                  <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-black/65 text-white text-[11px] font-medium px-2 py-1 rounded-full flex items-center gap-1">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                      <path d="M15 3h6m0 0v6m0-6-7 7M9 21H3m0 0v-6m0 6 7-7" />
-                    </svg>
-                    Enlarge
-                  </span>
+                <span className="absolute bottom-1.5 right-1.5 pointer-events-none rounded-full bg-black/70 px-2 py-0.5 text-[10px] font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
+                  Enlarge
                 </span>
               </button>
 
               {img.caption && (
-                <figcaption className="text-xs text-ink-muted text-center font-mono leading-relaxed">
+                <figcaption
+                  title={img.caption}
+                  className={`w-full text-left leading-snug text-ink-muted/90 font-sans line-clamp-3 ${compact ? "text-[10px] sm:text-[11px]" : "text-[11px] sm:text-xs"}`}
+                >
                   {img.caption}
                 </figcaption>
               )}
@@ -132,17 +161,16 @@ export function ImageGallery({ images }: { images: ProjectImage[] }) {
         })}
       </div>
 
-      {/* ── Lightbox modal ───────────────────────────────────── */}
       {selectedImage && selectedBlob && (
         <div
           role="dialog"
           aria-modal="true"
           aria-label={selectedImage.alt}
-          className="fixed inset-0 z-[9998] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+          className="fixed inset-0 z-[9998] flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm"
           onClick={close}
         >
           <div
-            className="relative max-w-5xl w-full rounded-2xl overflow-hidden bg-black/40 shadow-2xl"
+            className="relative max-w-4xl w-full rounded-2xl overflow-hidden bg-black/50 shadow-2xl border border-white/10"
             onClick={(e) => e.stopPropagation()}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -151,41 +179,48 @@ export function ImageGallery({ images }: { images: ProjectImage[] }) {
               alt={selectedImage.alt}
               draggable={false}
               onContextMenu={noCtx}
-              className="block max-h-[80vh] w-full object-contain select-none"
+              className="block max-h-[85vh] w-full object-contain select-none bg-black/40"
               style={{ WebkitUserDrag: "none" } as React.CSSProperties}
             />
 
             {selectedImage.caption && (
-              <p className="text-sm text-white/70 text-center font-mono py-3 px-4 bg-black/40">
+              <p className="text-sm text-white/80 font-sans py-3 px-4 bg-black/60 border-t border-white/10">
                 {selectedImage.caption}
               </p>
             )}
 
-            {/* Prev / Next arrows (when multiple images) */}
             {images.length > 1 && (
               <>
                 <button
-                  onClick={(e) => { e.stopPropagation(); setSelectedIdx((i) => (i! - 1 + images.length) % images.length); }}
-                  aria-label="Previous"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedIdx((i) => (i! - 1 + images.length) % images.length);
+                  }}
+                  aria-label="Previous image"
+                  className="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6" /></svg>
                 </button>
                 <button
-                  onClick={(e) => { e.stopPropagation(); setSelectedIdx((i) => (i! + 1) % images.length); }}
-                  aria-label="Next"
-                  className="absolute right-12 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedIdx((i) => (i! + 1) % images.length);
+                  }}
+                  aria-label="Next image"
+                  className="absolute right-12 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6" /></svg>
                 </button>
               </>
             )}
 
-            {/* Close */}
             <button
+              type="button"
               onClick={close}
               aria-label="Close"
-              className="absolute top-3 right-3 w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 text-white flex items-center justify-center transition-colors"
+              className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <path d="M18 6 6 18M6 6l12 12" />

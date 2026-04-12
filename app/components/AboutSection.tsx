@@ -1,70 +1,10 @@
 "use client";
 
-import { FadeIn, StaggerContainer, StaggerItem } from "./FadeIn";
-
-/* ── Pillar icons ─────────────────────────────────────────────── */
-
-function GradCapIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-      <path d="M6 12v5c3 3 9 3 12 0v-5" />
-    </svg>
-  );
-}
-
-function HeartPulseIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-      <path d="M3.22 12H9.5l1.5-3 2 4.5 1.5-3h5.27" />
-    </svg>
-  );
-}
-
-function ShieldPlusIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" />
-      <path d="M9 12h6M12 9v6" />
-    </svg>
-  );
-}
-
-function LightbulbIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
-      <path d="M9 18h6" />
-      <path d="M10 22h4" />
-    </svg>
-  );
-}
+import Link from "next/link";
+import { AccentGlow } from "./AccentGlow";
+import { FadeIn } from "./FadeIn";
 
 /* ── Data ─────────────────────────────────────────────────────── */
-
-const PILLARS = [
-  {
-    icon: <GradCapIcon />,
-    title: "Engineering Science Student",
-    body: "Currently navigating one of Canada's most intensive engineering curricula with a cGPA of 3.68. Building a strong foundation in engineering principles and problem-solving.",
-  },
-  {
-    icon: <HeartPulseIcon />,
-    title: "Emergency Medicine Focus",
-    body: "Everything I do leans into my long-term focus on Emergency Medicine. I'm driven by the goal to bring technical perspectives from engineering to frontline care.",
-  },
-  {
-    icon: <ShieldPlusIcon />,
-    title: "Certified Instructor & Lifeguard",
-    body: "NLS-certified and a certified Standard First Aid Instructor for the City of Mississauga. I regularly supervise 50+ concurrent patrons and have coached 150+ youth swimmers.",
-  },
-  {
-    icon: <LightbulbIcon />,
-    title: "Design Philosophy",
-    body: "I'm a learner first. I thrive to remain curious, willing to change my assumptions, and strive to build solutions around a stakeholder-centric approach.",
-  },
-];
 
 const SKILL_GROUPS = [
   {
@@ -90,7 +30,7 @@ const SKILL_GROUPS = [
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center gap-4 mb-5">
-      <span className="text-xs font-bold tracking-[0.2em] uppercase text-accent-hi whitespace-nowrap">
+      <span className="text-xs font-medium tracking-[0.2em] uppercase text-accent-hi whitespace-nowrap">
         {children}
       </span>
       <div className="flex-1 h-px bg-gradient-to-r from-accent-hi/35 to-transparent" />
@@ -107,62 +47,11 @@ function SectionCard({
 }) {
   return (
     <div className="rounded-xl border border-rim/50 bg-card px-7 py-6 shadow-sm">
-      <h2 className="text-xl font-semibold text-ink mb-4 tracking-tight">
+      <h2 className="text-xl font-medium text-ink mb-4 tracking-tight">
         {title}
       </h2>
       {children}
     </div>
-  );
-}
-
-/* ── Pillar card ──────────────────────────────────────────────── */
-
-function PillarCard({
-  icon,
-  title,
-  body,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  body: string;
-}) {
-  return (
-    <div className="ecg-panel rounded-xl border border-rim/50 bg-card px-5 py-5 flex flex-col gap-3 h-full">
-      <span className="flex items-center justify-center w-9 h-9 rounded-lg bg-accent/15 text-accent-hi shrink-0">
-        {icon}
-      </span>
-      <h3 className="text-base font-semibold text-ink leading-snug">{title}</h3>
-      <p className="text-sm text-ink-muted leading-relaxed">{body}</p>
-    </div>
-  );
-}
-
-/* ── Position item ────────────────────────────────────────────── */
-
-function PositionItem({
-  role,
-  org,
-  period,
-  note,
-}: {
-  role: string;
-  org: string;
-  period: string;
-  note?: string;
-}) {
-  return (
-    <li className="flex items-start gap-3">
-      <span className="mt-2 w-2 h-2 rounded-full bg-accent-hi shrink-0" />
-      <div>
-        <p className="text-base font-semibold text-ink leading-snug">{role}</p>
-        <p className="text-sm text-ink-muted mt-0.5">
-          {org} &middot; {period}
-        </p>
-        {note && (
-          <p className="text-xs text-ink-muted/60 font-mono mt-0.5">{note}</p>
-        )}
-      </div>
-    </li>
   );
 }
 
@@ -174,57 +63,104 @@ export function AboutSection() {
       id="about"
       className="max-w-5xl mx-auto w-full px-6 pb-28 flex flex-col gap-10"
     >
-      {/* ── Core Pillars ── */}
-      <div>
-        <FadeIn>
-          <SectionLabel>What Drives Me</SectionLabel>
-        </FadeIn>
-
-        <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {PILLARS.map((p) => (
-            <StaggerItem key={p.title}>
-              <PillarCard {...p} />
-            </StaggerItem>
-          ))}
-        </StaggerContainer>
-      </div>
-
-      {/* ── My Position ── */}
+      {/* ── Intro ── */}
       <FadeIn>
-        <SectionLabel>My Position</SectionLabel>
-        <SectionCard title="My Position">
-          <div className="flex items-center justify-center h-20 rounded-lg border border-dashed border-rim/50">
-            <span className="text-sm text-ink-muted/40 font-mono tracking-wider select-none">
-              — coming soon —
-            </span>
+        <SectionLabel>About Me</SectionLabel>
+        <SectionCard title="At a Glance">
+          <div className="space-y-4">
+            <p className="text-base text-ink-muted leading-relaxed">
+              I am an{" "}
+              <AccentGlow>
+                Engineering Science student at the University of Toronto
+              </AccentGlow>{" "}
+              building a strong foundation in engineering principles and problem
+              solving. Everything I do leans into my long-term focus on{" "}
+              <AccentGlow>Emergency Medicine</AccentGlow>. I&apos;m driven by the
+              goal to bring{" "}
+              <AccentGlow>
+                technical perspectives from engineering to frontline care in
+                emergency medicine
+              </AccentGlow>
+              .
+            </p>
+            <p className="text-base text-ink-muted leading-relaxed">
+              Outside being a student, I teach{" "}
+              <AccentGlow>first aid and swim instruction</AccentGlow> supervise{" "}
+              <AccentGlow>high-volume aquatic environments</AccentGlow> as a{" "}
+              <AccentGlow>lifeguard</AccentGlow>. In my spare time, I stay active
+              in <AccentGlow>music and media production</AccentGlow>, being a{" "}
+              <AccentGlow>bassist and music producer</AccentGlow>.
+            </p>
+            <div className="pt-1">
+              <Link
+                href="/profile"
+                className="inline-flex items-center rounded-full border border-accent-hi/45 px-5 py-2.5 font-sans text-[11px] uppercase tracking-[0.22em] text-accent-hi hover:bg-accent/10 transition-colors"
+              >
+                Open Profile
+              </Link>
+            </div>
           </div>
         </SectionCard>
       </FadeIn>
 
-      {/* ── Current Roles ── */}
+      {/* ── My Position ── */}
       <FadeIn>
-        <SectionLabel>Current Roles</SectionLabel>
-        <SectionCard title="Current Roles">
-          <ul className="flex flex-col gap-4">
-            <PositionItem
-              role="Engineering Science Student"
-              org="University of Toronto"
-              period="2025 – Present"
-              note="CGPA 3.68 · Dean's List · Shaw Admission Scholarship"
-            />
-            <PositionItem
-              role="Advanced Leadership Instructor, First Aid & Lifesaving"
-              org="City of Mississauga"
-              period="Sep 2025 – Present"
-              note="86% cohort pass rate · First Aid, CPR and AED certified"
-            />
-            <PositionItem
-              role="Lifeguard & Swim Instructor"
-              org="City of Mississauga"
-              period="Aug 2023 – Present"
-              note="150+ youth taught · 100-patron supervision · NLS"
-            />
-          </ul>
+        <SectionLabel>My Position</SectionLabel>
+        <SectionCard title="My Position as an Engineering Student">
+          <div className="space-y-4">
+            <p className="text-sm text-ink-muted leading-relaxed border-b border-rim/40 pb-4">
+              <span className="font-medium text-ink/90"></span> Brief summary of my position. The
+              complete version (all sections, same material as the PDF) is on{" "}
+              <Link
+                href="/profile#position-on-design"
+                className="text-accent-hi underline-offset-2 hover:underline"
+              >
+                my profile
+              </Link>
+              .
+            </p>
+            <p className="text-base text-ink-muted leading-relaxed">
+              My practice as an engineering designer is driven by the principle
+              that technical solutions only gain meaning when{" "}
+              <AccentGlow>validated by the communities they serve</AccentGlow>.
+              Informed by my{" "}
+              <AccentGlow>
+                frontline experience in emergency first aid and aquatic
+                supervision
+              </AccentGlow>
+              {", I recognize that "}
+              <AccentGlow>stakeholders</AccentGlow> often operate under intense{" "}
+              <AccentGlow>cognitive load</AccentGlow> and{" "}
+              <AccentGlow>bounded rationality</AccentGlow>.
+            </p>
+            <p className="text-base text-ink-muted leading-relaxed">
+              Therefore, I approach every problem with an{" "}
+              <AccentGlow>agnostic lens</AccentGlow>, accepting that mathematical
+              models are{" "}
+              <AccentGlow>inherently incomplete simplifications</AccentGlow> of
+              complex human realities. Ultimately, I operate as a{" "}
+              <AccentGlow>learner first</AccentGlow> to build{" "}
+              <AccentGlow>sustainable</AccentGlow>, analytically sound systems
+              that remain{" "}
+              <AccentGlow>genuinely usable under pressure</AccentGlow>.
+            </p>
+            <div className="pt-1">
+              <Link
+                href="/profile#position-on-design"
+                className="inline-flex items-center rounded-full border border-accent-hi/45 px-5 py-2.5 font-sans text-[11px] uppercase tracking-[0.22em] text-accent-hi hover:bg-accent/10 transition-colors"
+              >
+                View Full Position
+              </Link>
+              <a
+                href="/api/pdf/position"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center ml-2 rounded-full border border-rim/50 px-5 py-2.5 font-sans text-[11px] uppercase tracking-[0.22em] text-ink-muted hover:text-ink hover:border-accent-hi/40 hover:bg-card transition-colors"
+              >
+                Alternatively View/Download Position as PDF
+              </a>
+            </div>
+          </div>
         </SectionCard>
       </FadeIn>
 
@@ -235,7 +171,7 @@ export function AboutSection() {
           <div className="flex flex-col gap-5">
             {SKILL_GROUPS.map((group) => (
               <div key={group.label}>
-                <p className="text-[10px] font-bold tracking-[0.18em] uppercase text-ink-muted/40 mb-2.5">
+                <p className="text-[10px] font-medium tracking-[0.18em] uppercase text-ink-muted/40 mb-2.5">
                   {group.label}
                 </p>
                 <div className="flex flex-wrap gap-2">
@@ -252,6 +188,37 @@ export function AboutSection() {
             ))}
           </div>
         </SectionCard>
+      </FadeIn>
+
+      {/* ── Explore Next ── */}
+      <FadeIn>
+        <SectionLabel>Explore Next</SectionLabel>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Link
+            href="/projects"
+            className="inline-flex items-center justify-center rounded-full border border-accent-hi/75 px-7 py-4 text-[15px] font-medium text-accent-hi bg-accent/22 hover:bg-accent/30 shadow-[0_0_22px_-8px_rgba(96,165,250,0.3)] transition-all duration-200"
+          >
+            Explore Projects
+          </Link>
+          <Link
+            href="/experience"
+            className="inline-flex items-center justify-center rounded-full border border-accent-hi/35 px-7 py-4 text-[15px] font-medium text-ink hover:text-ink hover:border-accent-hi/60 bg-card/70 hover:bg-card transition-all duration-200"
+          >
+            View Experience
+          </Link>
+          <Link
+            href="/profile"
+            className="inline-flex items-center justify-center rounded-full border border-accent-hi/35 px-7 py-4 text-[15px] font-medium text-ink hover:text-ink hover:border-accent-hi/60 bg-card/70 hover:bg-card transition-all duration-200"
+          >
+            Open Profile
+          </Link>
+          <Link
+            href="/contact"
+            className="inline-flex items-center justify-center rounded-full border border-accent-hi/35 px-7 py-4 text-[15px] font-medium text-ink hover:text-ink hover:border-accent-hi/60 bg-card/70 hover:bg-card transition-all duration-200"
+          >
+            Contact
+          </Link>
+        </div>
       </FadeIn>
     </section>
   );

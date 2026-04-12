@@ -23,12 +23,64 @@ type Release = {
 
 const RELEASES: Release[] = [
   {
+    version: "v2.0.0",
+    date: "Apr 10, 2026",
+    label: "latest",
+    summary:
+      "Major release: clinical blue visual system (replacing earlier green/teal aesthetic experiments), a dedicated Profile page, completion of the Praxis II case study, production hardening, new splash screen, and more.",
+    changes: [
+      {
+        kind: "new",
+        text: "Dedicated `/profile` page: long-form narrative, portrait, my position on engineering design, Field Notes with expandable photo, return-home navigation, and staggered scroll-in motion like the rest of the site.",
+      },
+      {
+        kind: "new",
+        text: "Splash screen with new design with Open File animation and a splash timer",
+      },
+      {
+        kind: "new",
+        text: "New Praxis II case study page with a results hero section and a one-pager section.",
+      },
+      {
+        kind: "new",
+        text: "References for the design case studies and projects with a dedicated references page.",
+      },
+      {
+        kind: "new",
+        text: "Added accordance with the University of Toronto code of Academic Behaviourand Professional Engineers Ontario code of ethics",
+      },
+      {
+        kind: "improved",
+        text: "Colour palette changed to a cohesive clinical blue look with neutral dark surfaces, aquatic accents, calmer ECG/grid/hero, and tighter spacing and hierarchy on Home and About.",
+      },
+      {
+        kind: "improved",
+        text: "Changelog: more room to read; inline `code` snippets use Geist Mono. Case study pages: refreshed copy is in progress across projects.",
+      },
+      {
+        kind: "improved",
+        text: "Mobile menu semantics improved for better accessibility.",
+      },
+      {
+        kind: "improved",
+        text: "Case study pages now include CTMFs, and an at a glance section.",
+      },
+      {
+        kind: "security",
+        text: "Dedicated 404 page, global overflow containment.",
+      },
+    ],
+  },
+  {
     version: "v1.1.1",
     date: "Apr 1, 2026",
-    label: "latest",
+    label: "minor",
     summary: "Added auto-generated sitemap for SEO.",
     changes: [
-      { kind: "new", text: "Auto-generated `sitemap.xml` via Next.js App Router, covering all static pages and dynamic project routes." },
+      {
+        kind: "new",
+        text: "Auto-generated `sitemap.xml` via Next.js App Router, covering all static pages and dynamic project routes.",
+      },
     ],
   },
   {
@@ -48,8 +100,8 @@ const RELEASES: Release[] = [
       { kind: "security", text: "Gallery images loaded as `blob:` URLs, original file paths no longer visible in elements panels." },
       { kind: "security", text: "Static assets moved out of `public/` into `private/`, direct URL access blocked." },
       { kind: "improved", text: "Colour palette changed to surgical teals and deep navy to fit new branding." },
-      { kind: "improved", text: "DotGrid canvas replaced with medical monitor graph-paper texture." },
-      { kind: "improved", text: "ECG panel hover animations and radar-pulse status dots added sitewide." },
+      { kind: "improved", text: "DotGrid graph-paper background (later simplified to a static CSS grid)." },
+      { kind: "improved", text: "ECG-inspired accents on panels and hero; later toned down for a flatter clinical look." },
       { kind: "improved", text: "Technical Skills section expanded and grouped by categories." },
       { kind: "improved", text: "Project summaries rewritten to be more impact-first." },
       { kind: "improved", text: "Experience section subheading lines match site-wide fade-to-transparent gradient style." },
@@ -88,7 +140,7 @@ const KIND_LABEL: Record<ChangeKind, string> = {
 
 function KindBadge({ kind }: { kind: ChangeKind }) {
   return (
-    <span className={`shrink-0 inline-block text-[9px] font-bold tracking-[0.15em] uppercase px-1.5 py-0.5 rounded border ${KIND_STYLES[kind]}`}>
+    <span className={`shrink-0 inline-block text-[9px] font-medium tracking-[0.15em] uppercase px-1.5 py-0.5 rounded border ${KIND_STYLES[kind]}`}>
       {KIND_LABEL[kind]}
     </span>
   );
@@ -104,7 +156,7 @@ function ChangeText({ text }: { text: string }) {
         part.startsWith("`") && part.endsWith("`") ? (
           <code
             key={i}
-            className="font-mono text-[11px] px-1.5 py-0.5 rounded bg-accent/10 border border-accent/25 text-accent-hi"
+            className="font-mono text-[11px] px-2 py-1 rounded-md bg-accent/10 border border-accent/25 text-accent-hi"
           >
             {part.slice(1, -1)}
           </code>
@@ -120,7 +172,7 @@ function ChangeText({ text }: { text: string }) {
 
 function releaseDotClass(label: Release["label"]) {
   if (label === "latest")
-    return "bg-accent-hi shadow-[0_0_8px_2px_rgba(82,171,152,0.35)]";
+    return "bg-accent-hi shadow-[0_0_10px_3px_rgba(96,165,250,0.2)]";
   return "bg-ink-muted/40";
 }
 
@@ -138,19 +190,19 @@ export function Changelog() {
       {/* Continuous vertical connector */}
       <div
         aria-hidden
-        className="absolute left-[5.25rem] top-3 bottom-3 w-px bg-gradient-to-b from-accent-hi/40 via-rim/30 to-transparent pointer-events-none"
+        className="absolute left-[5.5rem] sm:left-[5.625rem] top-3 bottom-3 w-px bg-gradient-to-b from-accent-hi/40 via-rim/30 to-transparent pointer-events-none"
       />
 
       {RELEASES.map((release) => (
         <StaggerItem key={release.version}>
-          <article className="relative flex gap-5 sm:gap-6 pb-12 last:pb-0">
+          <article className="relative flex gap-6 sm:gap-8 pb-16 last:pb-0">
 
             {/* ── Left: version badge + date ─────────────────── */}
             <div className="flex flex-col items-end gap-1.5 w-20 shrink-0 pt-0.5">
-              <span className={`font-mono text-[11px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap ${releaseBadgeClass(release.label)}`}>
+              <span className={`font-sans text-[11px] font-medium px-2 py-0.5 rounded-full border whitespace-nowrap ${releaseBadgeClass(release.label)}`}>
                 {release.version}
               </span>
-              <span className="font-mono text-[10px] text-ink-muted/50 whitespace-nowrap text-right leading-tight">
+              <span className="font-sans text-[10px] text-ink-muted/50 whitespace-nowrap text-right leading-tight">
                 {release.date}
               </span>
             </div>
@@ -161,14 +213,14 @@ export function Changelog() {
             </div>
 
             {/* ── Content ───────────────────────────────────── */}
-            <div className="flex flex-col gap-3 flex-1 min-w-0 pt-0.5">
-              <p className="text-sm font-semibold text-ink leading-snug">
+            <div className="flex flex-col gap-5 flex-1 min-w-0 pt-1">
+              <p className="text-sm font-medium text-ink leading-relaxed">
                 {release.summary}
               </p>
 
-              <ul className="space-y-2">
+              <ul className="space-y-3.5">
                 {release.changes.map((item, j) => (
-                  <li key={j} className="flex items-start gap-2.5 text-sm text-ink-muted leading-relaxed">
+                  <li key={j} className="flex items-start gap-3.5 text-sm text-ink-muted leading-[1.65]">
                     <KindBadge kind={item.kind} />
                     <span><ChangeText text={item.text} /></span>
                   </li>

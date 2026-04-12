@@ -1,20 +1,18 @@
 import type { Metadata } from "next";
+import { AccentGlow } from "../components/AccentGlow";
 import { FadeIn } from "../components/FadeIn";
-
-function S({ children }: { children: React.ReactNode }) {
-  return (
-    <span
-      className="text-accent-hi font-semibold"
-      style={{ textShadow: "0 0 8px rgba(82,171,152,0.35)" }}
-    >
-      {children}
-    </span>
-  );
-}
 
 export const metadata: Metadata = {
   title: "Experience",
   description: "Education, clinical roles, and team experience — Engineering Science at UofT, lifeguard and first aid instructor, and robotics competition team.",
+  keywords: [
+    "Engineering Science",
+    "University of Toronto",
+    "Clinical Engineering",
+    "Emergency Medicine",
+    "Lifeguard",
+    "First Aid Instructor",
+  ],
 };
 
 /* ── Data ─────────────────────────────────────────────────────── */
@@ -43,9 +41,9 @@ const SECTIONS: Section[] = [
         location: "Toronto, ON",
         period: "2025 – Present",
         bullets: [
-          <>CGPA: <S>3.68 / 4.0</S> — Dean&apos;s List, <S>Fall 2025</S></>,
+          <>CGPA: <AccentGlow>3.68 / 4.0</AccentGlow> — Dean&apos;s List, <AccentGlow>Fall 2025</AccentGlow></>,
           <>Shaw Admission Scholarship recipient</>,
-          <>Expected graduation: <S>June 2030</S></>,
+          <>Expected graduation: <AccentGlow>June 2030</AccentGlow></>,
         ],
         tags: ["Engineering Design", "Systems Modelling", "Computational Mathematics", "Technical Communication"],
       },
@@ -60,7 +58,7 @@ const SECTIONS: Section[] = [
         location: "Mississauga, ON",
         period: "Sep 2025 – Present",
         bullets: [
-          <>Co-instructs and evaluates Emergency First Aid cohorts of <S>15+</S> candidates, maintaining an <S>86%</S> success rate against national Lifesaving Society standards.</>,
+          <>Co-instructs and evaluates Emergency First Aid cohorts of <AccentGlow>15+</AccentGlow> candidates, maintaining an <AccentGlow>86%</AccentGlow> success rate against national Lifesaving Society standards.</>,
           <>Executes high-fidelity emergency simulations to assess candidate response times and medical intervention accuracy.</>,
           <>Currently completing Examiner and Standard First Aid instructional practicums to independently evaluate and authorize national certifications.</>,
         ],
@@ -72,8 +70,8 @@ const SECTIONS: Section[] = [
         location: "Mississauga, ON",
         period: "Aug 2023 – Present",
         bullets: [
-          <>Manages dynamic risk mitigation and aquatic safety protocols for high-traffic environments of up to <S>100+</S> concurrent patrons.</>,
-          <>Mentored <S>5+</S> junior staff members, ensuring strict adherence to standardized emergency response policies and public health compliance.</>,
+          <>Manages dynamic risk mitigation and aquatic safety protocols for high-traffic environments of up to <AccentGlow>100+</AccentGlow> concurrent patrons.</>,
+          <>Mentored <AccentGlow>5+</AccentGlow> junior staff members, ensuring strict adherence to standardized emergency response policies and public health compliance.</>,
         ],
         tags: ["NLS", "Supervision", "Risk Management", "Crisis Prevention", "Public Health"],
       },
@@ -88,8 +86,8 @@ const SECTIONS: Section[] = [
         location: "Mississauga, ON",
         period: "Sep 2023 – May 2025",
         bullets: [
-          <>Calculated chassis cutting angles from CAD drawings, reducing fabrication error to <S>&lt;5 mm</S> variance for the 2025 Waterloo Electric Vehicle Challenge</>,
-          <>Secured <S>$5,000+</S> in team sponsorships through outreach to <S>10+ organisations</S> for the 2024 FIRST Robotics Competition — Team Sustainability Award</>,
+          <>Calculated chassis cutting angles from CAD drawings, reducing fabrication error to <AccentGlow>&lt;5 mm</AccentGlow> variance for the 2025 Waterloo Electric Vehicle Challenge</>,
+          <>Secured <AccentGlow>$5,000+</AccentGlow> in team sponsorships through outreach to <AccentGlow>10+ organisations</AccentGlow> for the 2024 FIRST Robotics Competition — Team Sustainability Award</>,
         ],
         tags: ["CAD", "FIRST Robotics", "Fundraising", "EV Design"],
       },
@@ -118,14 +116,14 @@ function EntryPanel({ entry }: { entry: Entry }) {
         {/* Header row */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
           <div>
-            <h3 className="text-xl font-semibold text-ink leading-snug tracking-tight">
+            <h3 className="text-xl font-medium text-ink leading-snug tracking-tight">
               {entry.title}
             </h3>
             <p className="text-base text-ink-muted mt-1">
               {entry.org} &middot; {entry.location}
             </p>
           </div>
-          <span className="shrink-0 self-start text-sm font-mono text-accent-hi bg-accent/10 border border-accent/25 px-3 py-1 rounded-md">
+          <span className="shrink-0 self-start text-sm font-sans text-accent-hi bg-accent/10 border border-accent/25 px-3 py-1 rounded-md">
             {entry.period}
           </span>
         </div>
@@ -160,7 +158,7 @@ function SectionGroup({ section }: { section: Section }) {
     <div className="mb-14">
       {/* Section header */}
       <div className="flex items-center gap-4 mb-6">
-        <h2 className="text-xs font-bold tracking-[0.2em] uppercase text-accent-hi whitespace-nowrap">
+        <h2 className="text-xs font-medium tracking-[0.2em] uppercase text-accent-hi whitespace-nowrap">
           {section.category}
         </h2>
         <div className="flex-1 h-px bg-gradient-to-r from-accent-hi/35 to-transparent" />
@@ -180,7 +178,7 @@ function SectionGroup({ section }: { section: Section }) {
 export default function ExperiencePage() {
   return (
     <main className="max-w-5xl mx-auto px-6 pt-28 pb-24">
-      <h1 className="text-5xl font-bold text-ink mb-3 tracking-tight">
+      <h1 className="text-5xl font-medium text-ink mb-3 tracking-tight">
         Experience
       </h1>
       <p className="text-base text-ink-muted mb-12">

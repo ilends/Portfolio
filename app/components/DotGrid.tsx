@@ -1,24 +1,28 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef } from "react";
 
-// ── Layout ────────────────────────────────────────────────────────
-const ROW_H        = 96;
-const SCROLL_SPEED = 22;  // px/s
-const BALL_SPEED   = 180; // px/s
-const BALL_R       = 2.5;
+// â”€â”€ Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const ROW_H = 96;
+const SCROLL_SPEED = 15;
+const BALL_SPEED = 95;
+const BALL_R = 2.1;
 
-// ── Beat shape ────────────────────────────────────────────────────
-// [x, yOffset from centerline].  Beat zone = 0…BEAT_W px.
-// Reduced QRS swing for less snap.
+// â”€â”€ Beat shape (scrolling baseline) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const BEAT_W = 90;
 const BEAT_SHAPE: [number, number][] = [
-  [0,   0],
-  [5,   0], [10,  -5], [16,  0],   // P wave
-  [24,  0],
-  [27,  3], [30, -26], [33, 13], [36, 0], // QRS
-  [43,  1],
-  [50, -10], [60, 0],              // T wave
+  [0, 0],
+  [5, 0],
+  [10, -5],
+  [16, 0],
+  [24, 0],
+  [27, 3],
+  [30, -26],
+  [33, 13],
+  [36, 0],
+  [43, 1],
+  [50, -10],
+  [60, 0],
   [BEAT_W, 0],
 ];
 
@@ -32,26 +36,31 @@ function getBeatYOffset(x: number): number {
   return 0;
 }
 
-// ── Per-row config ────────────────────────────────────────────────
-interface RowCfg { beatSpacing: number; phaseOffset: number; }
-
-// Sin-based hash: well-distributed even for small seeds (avoids LCG clustering)
 function h(seed: number): number {
   const s = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
   return s - Math.floor(s);
 }
 
+interface RowCfg {
+  beatSpacing: number;
+  phaseOffset: number;
+}
+
 function makeRowCfg(row: number): RowCfg {
-  const beatSpacing = Math.round(520 + h(row * 3 + 0.5) * 260);      // 520–780 px (integer)
-  const phaseOffset = Math.round(h(row * 7 + 2.3) * beatSpacing);    // 0…beatSpacing-1
+  const beatSpacing = Math.round(520 + h(row * 3 + 0.5) * 260);
+  const phaseOffset = Math.round(h(row * 7 + 2.3) * beatSpacing);
   return { beatSpacing, phaseOffset };
 }
 
-// Spread balls so rows don't share the same x at the same time
-const PHASES = [0, 0.37, 0.61, 0.14, 0.82, 0.50, 0.25, 0.73, 0.44, 0.91, 0.07, 0.55];
+const PHASES = [0, 0.37, 0.61, 0.14, 0.82, 0.5, 0.25, 0.73, 0.44, 0.91, 0.07, 0.55];
+
+/** Muted blue-slate â€” readable motion without â€œterminal laserâ€ intensity */
+function trailRgb(dark: boolean): string {
+  return dark ? "130, 162, 198" : "82, 118, 165";
+}
 
 export function DotGrid() {
-  const canvasRef  = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const rowCfgsRef = useRef<RowCfg[]>([]);
 
   function ensureConfigs(n: number) {
@@ -66,12 +75,12 @@ export function DotGrid() {
 
     let raf: number | null = null;
     let startTime: number | null = null;
-    let accumulatedMs = 0;   // total elapsed ms before last pause
+    let accumulatedMs = 0;
     let lastDrawTs: number | null = null;
 
     function resize() {
       if (!canvas) return;
-      canvas.width  = window.innerWidth;
+      canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
       ensureConfigs(Math.ceil(canvas.height / ROW_H) + 2);
     }
@@ -90,7 +99,7 @@ export function DotGrid() {
       ctx.clearRect(0, 0, width, height);
 
       const dark = document.documentElement.classList.contains("dark");
-      const rgb  = dark ? "82,171,152" : "43,103,119";
+      const rgb = trailRgb(dark);
 
       const numRows = Math.ceil(height / ROW_H) + 2;
       ensureConfigs(numRows);
@@ -98,7 +107,6 @@ export function DotGrid() {
       for (let row = 0; row < numRows; row++) {
         const { beatSpacing, phaseOffset } = rowCfgsRef.current[row];
         const rowCenterY = row * ROW_H + ROW_H / 2;
-
         const tilePhase = (scrollX + phaseOffset) % beatSpacing;
 
         ctx.save();
@@ -116,36 +124,54 @@ export function DotGrid() {
           ctx.lineTo(tx + beatSpacing, rowCenterY);
         }
 
-        ctx.lineWidth   = 5;
-        ctx.strokeStyle = `rgba(${rgb},0.02)`;
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = `rgba(${rgb},0.01)`;
         ctx.stroke();
-        ctx.lineWidth   = 1.1;
-        ctx.strokeStyle = `rgba(${rgb},0.055)`;
+        ctx.lineWidth = 1.05;
+        ctx.strokeStyle = `rgba(${rgb},0.022)`;
         ctx.stroke();
         ctx.restore();
 
-        const ballX      = (elapsed * BALL_SPEED + PHASES[row % PHASES.length] * width) % width;
-        const ballTileX  = (ballX + tilePhase) % beatSpacing;
-        const ballY      = rowCenterY + getBeatYOffset(ballTileX);
+        const ballX =
+          (elapsed * BALL_SPEED + PHASES[row % PHASES.length] * width) % width;
+        const ballTileX = (ballX + tilePhase) % beatSpacing;
+        const ballY = rowCenterY + getBeatYOffset(ballTileX);
 
-        const outer = ctx.createRadialGradient(ballX, ballY, 0, ballX, ballY, 12);
-        outer.addColorStop(0, `rgba(${rgb},0.18)`);
+        const outerR = 22;
+        const outer = ctx.createRadialGradient(
+          ballX,
+          ballY,
+          0,
+          ballX,
+          ballY,
+          outerR,
+        );
+        outer.addColorStop(0, `rgba(${rgb},0.05)`);
+        outer.addColorStop(0.45, `rgba(${rgb},0.02)`);
         outer.addColorStop(1, `rgba(${rgb},0)`);
         ctx.beginPath();
         ctx.fillStyle = outer;
-        ctx.arc(ballX, ballY, 12, 0, Math.PI * 2);
+        ctx.arc(ballX, ballY, outerR, 0, Math.PI * 2);
         ctx.fill();
 
-        const mid = ctx.createRadialGradient(ballX, ballY, 0, ballX, ballY, 5);
-        mid.addColorStop(0, `rgba(${rgb},0.55)`);
+        const midR = 6;
+        const mid = ctx.createRadialGradient(
+          ballX,
+          ballY,
+          0,
+          ballX,
+          ballY,
+          midR,
+        );
+        mid.addColorStop(0, `rgba(${rgb},0.14)`);
         mid.addColorStop(1, `rgba(${rgb},0)`);
         ctx.beginPath();
         ctx.fillStyle = mid;
-        ctx.arc(ballX, ballY, 5, 0, Math.PI * 2);
+        ctx.arc(ballX, ballY, midR, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.beginPath();
-        ctx.fillStyle = `rgba(${rgb},0.92)`;
+        ctx.fillStyle = `rgba(${rgb},0.38)`;
         ctx.arc(ballX, ballY, BALL_R, 0, Math.PI * 2);
         ctx.fill();
       }
@@ -164,7 +190,6 @@ export function DotGrid() {
         cancelAnimationFrame(raf);
         raf = null;
       }
-      /* Accumulate so the animation resumes from where it visually left off */
       if (startTime !== null && lastDrawTs !== null) {
         accumulatedMs += lastDrawTs - startTime;
         startTime = null;
@@ -172,36 +197,37 @@ export function DotGrid() {
     }
 
     function handleVisibilityChange() {
-      if (document.visibilityState === "hidden") stop(); else start();
+      if (document.visibilityState === "hidden") stop();
+      else start();
     }
-    /* pagehide fires when navigating away — lets the browser cache the page */
-    function handlePageHide() { stop(); }
-    function handlePageShow() { start(); }
+    function handlePageHide() {
+      stop();
+    }
+    function handlePageShow() {
+      start();
+    }
 
     resize();
     start();
     window.addEventListener("resize", resize);
     document.addEventListener("visibilitychange", handleVisibilityChange);
     window.addEventListener("pagehide", handlePageHide);
-    window.addEventListener("pageshow",  handlePageShow);
+    window.addEventListener("pageshow", handlePageShow);
 
     return () => {
       stop();
       window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("pagehide", handlePageHide);
-      window.removeEventListener("pageshow",  handlePageShow);
+      window.removeEventListener("pageshow", handlePageShow);
     };
   }, []);
 
   return (
     <div
       aria-hidden="true"
+      className="fixed inset-0 z-0 pointer-events-none"
       style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 0,
-        pointerEvents: "none",
         backgroundImage: [
           "linear-gradient(var(--grid-minor) 1px, transparent 1px)",
           "linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px)",
@@ -213,7 +239,7 @@ export function DotGrid() {
     >
       <canvas
         ref={canvasRef}
-        style={{ position: "absolute", inset: 0, display: "block" }}
+        className="absolute inset-0 block mix-blend-multiply opacity-[0.88] dark:mix-blend-screen dark:opacity-100"
       />
     </div>
   );

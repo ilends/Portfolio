@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { SPLASH_STORAGE_KEY } from "@/lib/splashStorage";
 import { usePathname } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
 import { useState, useEffect } from "react";
 
 const NAV_LINKS = [
-  { label: "About",      href: "/" },
+  { label: "Home",       href: "/" },
+  { label: "Profile",    href: "/profile" },
   { label: "Experience", href: "/experience" },
   { label: "Projects",   href: "/projects" },
   { label: "Contact",    href: "/contact" },
@@ -60,7 +62,7 @@ function StatusIndicator() {
     >
       <span className="w-px h-4 bg-rim/50" />
       <span className="radar-dot w-2 h-2 rounded-full bg-accent-hi shrink-0" />
-      <span className="font-mono text-[11px] tracking-wider text-ink-muted group-hover:text-ink transition-colors duration-150">
+      <span className="font-sans text-[11px] tracking-wider text-ink-muted group-hover:text-ink transition-colors duration-150">
         <span className="text-accent-hi/80 group-hover:text-accent-hi transition-colors duration-150">STATUS</span>
         <span className="text-rim/60 mx-1">:</span>
         <span className="hidden md:inline group-hover:underline underline-offset-2 decoration-accent-hi/40">SEEKING RESEARCH OPPORTUNITIES</span>
@@ -76,9 +78,10 @@ function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
   return (
     <button
+      type="button"
       onClick={toggleTheme}
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-      className="flex items-center justify-center w-8 h-8 rounded-full border border-rim/50 text-ink-muted hover:text-ink hover:border-accent-hi/50 hover:bg-card transition-colors duration-150 cursor-pointer"
+      className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-rim/50 text-ink-muted transition-colors duration-150 hover:border-accent-hi/50 hover:bg-card hover:text-ink"
     >
       {theme === "dark" ? <SunIcon /> : <MoonIcon />}
     </button>
@@ -91,7 +94,8 @@ export function Header() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  /* Close drawer on route change */
+  /* Close drawer on route change (e.g. browser back/forward without firing Link onClick). */
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- sync mobile drawer to URL
   useEffect(() => { setMenuOpen(false); }, [pathname]);
 
   /* Lock body scroll while drawer is open */
@@ -106,12 +110,22 @@ export function Header() {
 
         {/* Left: logo + status beacon */}
         <div className="flex items-center gap-3 mr-auto">
-          <Link
-            href="/"
-            className="font-mono text-sm font-bold tracking-widest text-accent-hi uppercase hover:opacity-75 transition-opacity"
+          <button
+            type="button"
+            aria-label="Go to home page"
+            onClick={() => {
+              sessionStorage.removeItem(SPLASH_STORAGE_KEY);
+              try {
+                localStorage.removeItem(SPLASH_STORAGE_KEY);
+              } catch {
+                /* ignore */
+              }
+              window.location.href = "/";
+            }}
+            className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-md font-sans text-sm font-medium tracking-widest text-accent-hi uppercase transition-opacity hover:opacity-75"
           >
             DA
-          </Link>
+          </button>
           <StatusIndicator />
         </div>
 
@@ -124,7 +138,7 @@ export function Header() {
                 <Link
                   key={label}
                   href={href}
-                  className={`px-3.5 py-1.5 rounded-md text-sm font-medium transition-colors duration-150 ${
+                  className={`inline-flex min-h-10 items-center rounded-md px-3.5 py-2 text-sm font-medium transition-colors duration-150 ${
                     isActive ? "text-ink bg-card" : "text-ink-muted hover:text-ink hover:bg-card"
                   }`}
                 >
@@ -141,10 +155,12 @@ export function Header() {
         <div className="flex sm:hidden items-center gap-2">
           <ThemeToggle />
           <button
+            type="button"
             onClick={() => setMenuOpen((o) => !o)}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
-            className="flex items-center justify-center w-8 h-8 rounded-full border border-rim/50 text-ink-muted hover:text-ink hover:border-accent-hi/50 hover:bg-card transition-colors duration-150 cursor-pointer"
+            aria-controls="mobile-site-nav"
+            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-rim/50 text-ink-muted transition-colors duration-150 hover:border-accent-hi/50 hover:bg-card hover:text-ink"
           >
             {menuOpen ? <XIcon /> : <MenuIcon />}
           </button>
@@ -153,15 +169,24 @@ export function Header() {
 
       {/* Mobile slide-down drawer */}
       {menuOpen && (
-        <div className="fixed inset-0 z-40 sm:hidden" onClick={() => setMenuOpen(false)}>
+        <div
+          className="fixed inset-0 z-40 sm:hidden"
+          onClick={() => setMenuOpen(false)}
+          role="presentation"
+        >
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" aria-hidden />
 
           {/* Panel */}
-          <nav
-            className="absolute top-[65px] left-0 right-0 border-b border-rim/30 bg-surface/95 backdrop-blur-md px-4 py-3 flex flex-col gap-1"
+          <div
+            id="mobile-site-nav"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site menu"
+            className="absolute top-[65px] left-0 right-0 border-b border-rim/30 bg-surface/95 px-4 py-3 backdrop-blur-md"
             onClick={(e) => e.stopPropagation()}
           >
+            <nav className="flex flex-col gap-1" aria-label="Primary pages">
             {NAV_LINKS.map(({ label, href }) => {
               const isActive = href === "/" ? pathname === "/" : pathname.startsWith(href);
               return (
@@ -184,14 +209,15 @@ export function Header() {
             <a
               href="mailto:research@davidangelo.ca"
               onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2 px-4 py-3 mt-1 rounded-lg border border-rim/30 text-xs font-mono text-ink-muted hover:text-ink hover:bg-card transition-colors duration-150"
+              className="flex items-center gap-2 px-4 py-3 mt-1 rounded-lg border border-rim/30 text-xs font-sans text-ink-muted hover:text-ink hover:bg-card transition-colors duration-150"
             >
               <span className="radar-dot w-2 h-2 rounded-full bg-accent-hi shrink-0" />
               <span className="text-accent-hi/80">STATUS</span>
               <span className="text-rim/60">:</span>
               <span className="text-ink-muted">SEEKING RESEARCH OPPORTUNITIES</span>
             </a>
-          </nav>
+            </nav>
+          </div>
         </div>
       )}
     </>
