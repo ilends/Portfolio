@@ -4,7 +4,8 @@ import path from "path";
 
 /* ── Opaque slug → actual filename map ──────────────────────────
    Only slugs listed here can be served. Any other slug returns 404.
-   The actual filenames are never exposed to the client.
+   PDFs live in private/reports/ (tracked in git — see .gitignore).
+   The actual filenames are not exposed in hrefs (only /api/pdf/[slug]).
 ──────────────────────────────────────────────────────────────── */
 
 const PDF_MAP: Record<string, string> = {
@@ -33,13 +34,11 @@ export async function GET(
     return new NextResponse("Not found", { status: 404 });
   }
 
-  /* private/ is outside public/ so Next.js never serves it as a static asset */
   const filePath = path.join(process.cwd(), "private", "reports", filename);
 
   try {
     const buffer = await readFile(filePath);
-
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
