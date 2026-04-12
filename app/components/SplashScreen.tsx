@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const SPLASH_KEY = "da-splash-v2";
+import { isSplashDismissed, SPLASH_STORAGE_KEY } from "@/lib/splashStorage";
 
 /** Same stack as the rest of the site (Geist) — reads close to SF Pro on Apple */
 const splashSans = "font-sans antialiased";
@@ -53,15 +52,24 @@ function AmbientMarks() {
 export function SplashScreen() {
   const [show, setShow] = useState(false);
 
-  useEffect(() => {
-    if (sessionStorage.getItem(SPLASH_KEY)) return;
+  /* Client-only: show splash on first visit this session (storage unavailable on server). */
+  useLayoutEffect(() => {
+    if (isSplashDismissed()) return;
+    /* Sync setState in effect is intentional: gate depends on sessionStorage after mount. */
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- splash visibility is client-only
     setShow(true);
   }, []);
 
   function dismiss() {
+    /* Persist first so isSplashDismissed() and any listeners see consistent storage. */
+    sessionStorage.setItem(SPLASH_STORAGE_KEY, "1");
+    try {
+      localStorage.setItem(SPLASH_STORAGE_KEY, "1");
+    } catch {
+      /* ignore */
+    }
     window.dispatchEvent(new CustomEvent("splash-open-file"));
     setShow(false);
-    sessionStorage.setItem(SPLASH_KEY, "1");
   }
 
   return (

@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ExpandablePhoto } from "../components/ExpandablePhoto";
 import { StaggerContainer, StaggerItem } from "../components/FadeIn";
-import { PositionPrinciplesAccordion } from "../components/PositionPrinciplesAccordion";
+import {
+  PositionDevelopmentAccordion,
+  PositionPrinciplesAccordion,
+} from "../components/PositionPrinciplesAccordion";
 
 export const metadata: Metadata = {
   title: "Profile",
@@ -43,10 +47,17 @@ export default function ProfilePage() {
                 Engineering Science student focused on rigorous analysis for real-world medical and biomechanical challenges.
               </p>
 
-              <div
-                className="mt-10 w-64 h-64 rounded-full border-2 border-accent-hi/50 bg-card flex items-center justify-center overflow-hidden shadow-[0_0_28px_-10px_rgba(96,165,250,0.26)] bg-center bg-cover"
-                style={{ backgroundImage: "url('/api/image/portrait')" }}
-              />
+              <div className="relative mt-10 h-64 w-64 overflow-hidden rounded-full border-2 border-accent-hi/50 bg-card shadow-[0_0_28px_-10px_rgba(96,165,250,0.26)]">
+                <Image
+                  src="/api/image/portrait"
+                  alt="David Angelo"
+                  width={256}
+                  height={256}
+                  className="h-full w-full object-cover"
+                  priority
+                  sizes="256px"
+                />
+              </div>
             </section>
           </div>
         </StaggerItem>
@@ -70,7 +81,7 @@ export default function ProfilePage() {
                 That experience pushed me toward Engineering Science. I wanted to understand the technical side of the environments I worked in and learn how rigorous analysis could support real decisions in high pressure situations. The same focus I developed through music and sport translated naturally. Practicing bass guitar taught me discipline and rhythm, while lifeguarding demanded calm execution under pressure. Engineering gave me the tools to approach those situations analytically.
               </p>
               <p className="text-pretty">
-                Today, I'm interested in the intersection between engineering and emergency medicine. Frontline care often depends on clear information and reliable tools, especially when time and cognitive bandwidth are limited. My goal is to build a strong foundation in systems analysis and hardware so I can contribute to technologies that support clinicians in those moments. I am not interested in separating engineering from medicine. What motivates me is the possibility of bringing both together in environments where careful design can directly support patient care.
+                Today, I&apos;m interested in the intersection between engineering and emergency medicine. Frontline care often depends on clear information and reliable tools, especially when time and cognitive bandwidth are limited. My goal is to build a strong foundation in systems analysis and hardware so I can contribute to technologies that support clinicians in those moments. I am not interested in separating engineering from medicine. What motivates me is the possibility of bringing both together in environments where careful design can directly support patient care.
               </p>
             </div>
           </section>
@@ -85,12 +96,13 @@ export default function ProfilePage() {
               My Position on Engineering Design as an Engineering Student
             </h2>
             <p className="text-sm text-ink-muted mb-5 max-w-3xl leading-relaxed">
-              Expand each principle to read the full text. The same content is available as a PDF below.
+              Expand each principle to read the full text. The current statement and an earlier version are available as PDFs below.
             </p>
             <div className="rounded-lg border-l-2 border-accent-hi/45 pl-4 sm:pl-5">
               <PositionPrinciplesAccordion />
+              <PositionDevelopmentAccordion />
             </div>
-            <div className="pt-5">
+            <div className="pt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <a
                 href="/api/pdf/position"
                 target="_blank"
@@ -99,7 +111,18 @@ export default function ProfilePage() {
               >
                 Alternatively View/Download Position as PDF
               </a>
+              <a
+                href="/api/pdf/position-old"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center rounded-full border border-rim/50 px-5 py-2.5 font-sans text-[11px] uppercase tracking-[0.22em] text-ink-muted hover:text-ink hover:border-accent-hi/40 hover:bg-card transition-colors"
+              >
+                View Earlier Position as PDF
+              </a>
             </div>
+            <p className="mt-3 text-xs text-ink-muted/90 max-w-3xl leading-relaxed">
+              The earlier PDF is only slightly changed from what was submitted for coursework, to protect confidentiality where needed.
+            </p>
           </section>
         </StaggerItem>
 

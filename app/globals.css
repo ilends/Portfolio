@@ -63,6 +63,12 @@ body {
   /* Graph-paper grid via DotGrid (no canvas / dots) */
 }
 
+/* Kill UA default yellow <mark> if used elsewhere */
+mark {
+  background: transparent;
+  color: inherit;
+}
+
 /* ── Status dot: subtle opacity only (no ring / “radar” glow) ─── */
 @keyframes status-breathe {
   0%,

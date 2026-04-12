@@ -9,10 +9,13 @@ const SECTIONS: PositionSection[] = [
     content: (
       <div className="space-y-4">
         <p>
-          My practice as an <em>engineering student</em> is driven by a single core
-          principle: engineering solutions only gain meaning when they are{" "}
-          <AccentGlow>validated by the communities they serve</AccentGlow>. I
-          strive to remain a <AccentGlow>learner and student first</AccentGlow>, bridging the
+          My practice as an <em>engineering student</em> is driven by five core
+          principles: <AccentGlow>stakeholder centricity</AccentGlow>,{" "}
+          <AccentGlow>pragmatism</AccentGlow>,{" "}
+          <AccentGlow>bounded rationality</AccentGlow>,{" "}
+          <AccentGlow>impartial knowledge</AccentGlow> and{" "}
+          <AccentGlow>sustainability</AccentGlow>. I strive to remain a{" "}
+          <AccentGlow>learner and student first</AccentGlow>, bridging the
           gap between rigorous technical constraints and how human behaviour is,
           in nature, unpredictable.
         </p>
@@ -172,38 +175,80 @@ const SECTIONS: PositionSection[] = [
   },
 ];
 
+const detailsClass =
+  "group rounded-lg border border-rim/50 bg-ink/[0.02] open:border-accent-hi/35 open:bg-accent/[0.04] transition-colors";
+const summaryClass =
+  "cursor-pointer list-none px-4 py-3 pr-10 font-medium text-ink tracking-tight relative select-none [&::-webkit-details-marker]:hidden";
+const panelClass =
+  "px-4 pb-4 pt-0 text-[15px] text-ink/85 border-t border-rim/30 mt-0 pt-3 [&_p]:leading-relaxed [&_em]:px-[0.07em] [&_cite_em]:px-0";
+
+function Chevron() {
+  return (
+    <span
+      className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-accent-hi/80 transition-transform group-open:rotate-180"
+      aria-hidden
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <path d="M6 9l6 6 6-6" />
+      </svg>
+    </span>
+  );
+}
+
+/** Expandable reflection under the main position accordion (editable copy lives here). */
+export function PositionDevelopmentAccordion() {
+  return (
+    <div className="mt-6 max-w-3xl">
+      <div
+        className="h-px w-full bg-gradient-to-r from-accent-hi/45 via-rim/40 to-transparent mb-5"
+        aria-hidden
+      />
+      <details className={detailsClass}>
+        <summary className={summaryClass}>
+          <span className="text-[15px]">How my position has developed (and continues to develop) over time</span>
+          <Chevron />
+        </summary>
+        <div className={`${panelClass} space-y-4`}>
+          <p>
+            When I first started engineering, my position on engineering, design, and engineering design was rooted in broad philosphical concepts from my personal experiences. My core values at the time were:
+            a focus on <AccentGlow>community</AccentGlow>, an <AccentGlow>&apos;agnostic&apos; lens on life</AccentGlow>, an understanding of <AccentGlow>bounded rationality</AccentGlow> and{" "}
+            <AccentGlow>the incompleteness of models</AccentGlow>. Over the course of my first semester, these values formalized into
+            more specific principles: <AccentGlow>stakeholder centricity</AccentGlow>, <AccentGlow>impartial knowledge</AccentGlow>, <AccentGlow>a shift to pragmatism</AccentGlow>, and{" "}
+            <AccentGlow>using bounded rationality in practice</AccentGlow>. The
+            narrative of my first semester position shifts are detailed in the project descriptions for Praxis I and CIV102.
+          </p>
+          <p>
+            Entering my second semester, these values became the core of my initial position statement (though not written, <AccentGlow>bounded rationality</AccentGlow> was a core principle of mine).
+            These values were used to guide my design process for Praxis II, to design a variable-resistance aquatic training mechanism for the MSSAC High Performance Swim Team.
+            Praxis II demanded that I consider both <AccentGlow>engineering for people</AccentGlow> and <AccentGlow>engineering for the world</AccentGlow>. Through exploring cost and material constraints,
+            I realised that a design cannot truly serve stakeholders if it ignores <AccentGlow>the world&apos;s declining longevity</AccentGlow>.
+          </p>
+          <p>
+            This introduced <AccentGlow>sustainability</AccentGlow> as a value of mine, and my position on engineering design has evolved to reflect this. Throughout this process, my other core values:{" "}
+            <AccentGlow>stakeholder centricity</AccentGlow>, <AccentGlow>impartial knowledge</AccentGlow>, <AccentGlow>bounded rationality</AccentGlow>, and <AccentGlow>pragmatism</AccentGlow>, have remained core to my position and have matured as I continue to see these values in action. Today,
+            my practice is guided by <AccentGlow>these five values</AccentGlow>.
+          </p>
+          <p>
+            In my first position statement, I explored how{" "}
+            I approach engineering as an <AccentGlow>&apos;engineering student&apos;</AccentGlow> rather than a <AccentGlow>&apos;student engineer&apos;</AccentGlow> or <AccentGlow>&apos;engineering designer.&apos;</AccentGlow> Though I now have more experience with{" "}
+            engineering and design, I still strive to remain a student first. With this, I acknowledge that my position can be challenged, revised and expanded upon as I continue to pursue engineering education.
+          </p>
+        </div>
+      </details>
+    </div>
+  );
+}
+
 export function PositionPrinciplesAccordion() {
   return (
     <div className="space-y-2 max-w-3xl">
       {SECTIONS.map(({ title, content }) => (
-        <details
-          key={title}
-          className="group rounded-lg border border-rim/50 bg-ink/[0.02] open:border-accent-hi/35 open:bg-accent/[0.04] transition-colors"
-        >
-          <summary className="cursor-pointer list-none px-4 py-3 pr-10 font-medium text-ink tracking-tight relative select-none [&::-webkit-details-marker]:hidden">
+        <details key={title} className={detailsClass}>
+          <summary className={summaryClass}>
             <span className="text-[15px]">{title}</span>
-            <span
-              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-accent-hi/80 transition-transform group-open:rotate-180"
-              aria-hidden
-            >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              >
-                <path d="M6 9l6 6 6-6" />
-              </svg>
-            </span>
+            <Chevron />
           </summary>
-          <div
-            className="px-4 pb-4 pt-0 text-[15px] text-ink/85 border-t border-rim/30 mt-0 pt-3 [&_p]:leading-relaxed [&_em]:px-[0.07em] [&_cite_em]:px-0"
-          >
-            {content}
-          </div>
+          <div className={panelClass}>{content}</div>
         </details>
       ))}
     </div>

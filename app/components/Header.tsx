@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SPLASH_STORAGE_KEY } from "@/lib/splashStorage";
 import { usePathname } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
 import { useState, useEffect } from "react";
@@ -93,7 +94,8 @@ export function Header() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
 
-  /* Close drawer on route change */
+  /* Close drawer on route change (e.g. browser back/forward without firing Link onClick). */
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- sync mobile drawer to URL
   useEffect(() => { setMenuOpen(false); }, [pathname]);
 
   /* Lock body scroll while drawer is open */
@@ -110,8 +112,14 @@ export function Header() {
         <div className="flex items-center gap-3 mr-auto">
           <button
             type="button"
+            aria-label="Go to home page"
             onClick={() => {
-              sessionStorage.removeItem("da-splash-v2");
+              sessionStorage.removeItem(SPLASH_STORAGE_KEY);
+              try {
+                localStorage.removeItem(SPLASH_STORAGE_KEY);
+              } catch {
+                /* ignore */
+              }
               window.location.href = "/";
             }}
             className="inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-md font-sans text-sm font-medium tracking-widest text-accent-hi uppercase transition-opacity hover:opacity-75"

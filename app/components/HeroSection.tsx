@@ -1,10 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useState, useEffect, useRef, useCallback } from "react";
+import Link from "next/link";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
+import { isSplashDismissed } from "@/lib/splashStorage";
 import { WaterECGBackground, type ECGPhase } from "./WaterECGBackground";
-
-const SPLASH_KEY = "da-splash-v2";
 
 /* ── Icons ────────────────────────────────────────────────────── */
 
@@ -76,6 +76,8 @@ export function HeroSection() {
   const [showScrollHint, setScrollHint] = useState(false);
   const mountedRef = useRef(true);
   const timeoutIdsRef = useRef<number[]>([]);
+  const returnVisitorAppliedRef = useRef(false);
+  const firstVisitCleanupRef = useRef<(() => void) | null>(null);
 
   const pushTimeout = useCallback((fn: () => void, ms: number) => {
     const id = window.setTimeout(() => {
@@ -102,17 +104,25 @@ export function HeroSection() {
     };
   }, []);
 
-  useEffect(() => {
-    const isReturn = !!sessionStorage.getItem(SPLASH_KEY);
+  const applyReturnVisitor = useCallback(() => {
+    returnVisitorAppliedRef.current = true;
+    setBgPhase("background");
+    setContent(true);
+    pushTimeout(() => setScrollHint(true), 800);
+  }, [pushTimeout]);
 
-    if (isReturn) {
-      setBgPhase("background");
-      setContent(true);
-      pushTimeout(() => setScrollHint(true), 800);
+  /**
+   * Same timing as SplashScreen (useLayoutEffect) so duplicate-tab / storage order
+   * cannot strand the hero in "first visit" (overflow hidden, no splash, no event).
+   */
+  useLayoutEffect(() => {
+    if (isSplashDismissed()) {
+      /* Sync hero to storage (same frame as SplashScreen); not an external subscription. */
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- return-visitor path must run in layout pass
+      applyReturnVisitor();
       return;
     }
 
-    /* First visit — lock scroll, wait for "Open File" */
     document.body.style.overflow = "hidden";
 
     const handler = () => {
@@ -121,11 +131,30 @@ export function HeroSection() {
     };
 
     window.addEventListener("splash-open-file", handler);
-    return () => {
+
+    const cleanupFirstVisit = () => {
       window.removeEventListener("splash-open-file", handler);
       document.body.style.overflow = "";
     };
-  }, [pushTimeout]);
+    firstVisitCleanupRef.current = cleanupFirstVisit;
+
+    return () => {
+      cleanupFirstVisit();
+      firstVisitCleanupRef.current = null;
+    };
+  }, [pushTimeout, applyReturnVisitor]);
+
+  /**
+   * Safety net: if the layout pass missed persisted dismiss flags (duplicate-tab ordering),
+   * tear down the first-visit listener and show the hero.
+   */
+  useEffect(() => {
+    if (!isSplashDismissed() || returnVisitorAppliedRef.current) return;
+    firstVisitCleanupRef.current?.();
+    firstVisitCleanupRef.current = null;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- duplicate-tab heal after layout
+    applyReturnVisitor();
+  }, [applyReturnVisitor]);
 
   const handleDrawingComplete = useCallback(() => {
     /* Pause on full trace, then fade ECG to quiet background first; only after that fade does hero copy appear */
@@ -178,16 +207,17 @@ export function HeroSection() {
 
         {/* Big CTAs — closer to original site style */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 w-full max-w-md sm:max-w-2xl mt-2">
-          <a
+          <Link
             href="/projects"
             className="inline-flex items-center justify-center px-8 py-3 rounded-full text-base font-medium border border-accent-hi/60 text-accent-hi bg-accent/15 hover:bg-accent/25 hover:border-accent-hi transition-all duration-200"
           >
             View Projects
-          </a>
+          </Link>
           <a
             href="/api/pdf/resume"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="Open resume PDF in a new tab"
             className="inline-flex items-center justify-center px-8 py-3 rounded-full text-base font-medium border border-rim/50 text-ink-muted bg-transparent hover:text-ink hover:border-accent-hi/40 hover:bg-card transition-all duration-200"
           >
             Resume
@@ -218,6 +248,7 @@ export function HeroSection() {
         <motion.button
           type="button"
           onClick={handleContinueClick}
+          aria-label="Continue to about section"
           className="group flex min-h-11 items-center gap-2 rounded-full border border-accent-hi/45 bg-accent/8 px-5 py-2.5 text-accent-hi shadow-[0_0_22px_-8px_rgba(96,165,250,0.22)] backdrop-blur-sm transition-all duration-300 hover:border-accent-hi/70 hover:bg-accent/18"
           animate={{ y: [0, 2, 0] }}
           transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}

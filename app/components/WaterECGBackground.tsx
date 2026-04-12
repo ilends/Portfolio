@@ -81,7 +81,7 @@ export function WaterECGBackground({ phase, onDrawingComplete }: Props) {
           transition={{
             pathLength:
               phase === "drawing"
-                ? { duration: 2.5, ease: "easeInOut" }
+                ? { duration: 2.2, ease: "easeInOut" }
                 : { duration: 0 },
             opacity:
               phase === "drawing"
@@ -109,11 +109,11 @@ export function WaterECGBackground({ phase, onDrawingComplete }: Props) {
           transition={{
             pathLength:
               phase === "drawing"
-                ? { duration: 1.8, ease: "easeInOut", delay: 2.8 }
+                ? { duration: 1.55, ease: "easeInOut", delay: 2.45 }
                 : { duration: 0 },
             opacity:
               phase === "drawing"
-                ? { duration: 0.15, delay: 2.8 }
+                ? { duration: 0.15, delay: 2.45 }
                 : phase === "background"
                 ? { duration: 1.5, ease: "easeInOut" }
                 : { duration: 0 },

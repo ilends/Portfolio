@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function ChangelogPage() {
   return (
-    <main className="max-w-3xl mx-auto px-6 sm:px-8 pt-28 pb-32">
+    <main className="max-w-4xl mx-auto px-6 sm:px-8 pt-28 pb-32">
 
       {/* ── Page header ──────────────────────────────────────── */}
       <FadeIn>
@@ -27,7 +27,7 @@ export default function ChangelogPage() {
             {/* Live badge */}
             <span className="self-end mb-1.5 inline-flex items-center gap-1.5 font-sans text-[11px] font-medium tracking-[0.15em] uppercase px-2.5 py-1 rounded-full border border-accent/35 text-accent-hi bg-accent/10">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-hi shadow-[0_0_8px_2px_rgba(96,165,250,0.28)]" />
-              v1.2.0
+              v2.0.0
             </span>
           </div>
           <p className="text-base text-ink-muted leading-[1.65] max-w-xl">

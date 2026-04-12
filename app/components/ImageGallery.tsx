@@ -42,7 +42,13 @@ function useBlobUrls(images: ProjectImage[]) {
 
 const noCtx = (e: React.MouseEvent) => e.preventDefault();
 
-export function ImageGallery({ images }: { images: ProjectImage[] }) {
+type ImageGalleryProps = {
+  images: ProjectImage[];
+  /** Smaller thumbnails and tighter grid (e.g. under CTMF blocks). Lightbox behaviour unchanged. */
+  compact?: boolean;
+};
+
+export function ImageGallery({ images, compact = false }: ImageGalleryProps) {
   const blobUrls = useBlobUrls(images);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [thumbError, setThumbError] = useState<Record<number, boolean>>({});
@@ -69,12 +75,28 @@ export function ImageGallery({ images }: { images: ProjectImage[] }) {
 
   if (!images?.length) return null;
 
-  const gridClass =
-    images.length === 1
+  /** One CTMF image (e.g. composite grid): use natural aspect + wide cap so we do not letterbox inside a tiny square. */
+  const singleCompact = compact && images.length === 1;
+
+  const gridClass = compact
+    ? singleCompact
+      ? "grid-cols-1 w-full"
+      : images.length >= 3
+        ? "grid-cols-2 sm:grid-cols-3 max-w-2xl mx-auto"
+        : "grid-cols-1 sm:grid-cols-2 max-w-xl mx-auto"
+    : images.length === 1
       ? "grid-cols-1 max-w-lg mx-auto"
       : images.length >= 3
         ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto"
         : "grid-cols-1 sm:grid-cols-2 max-w-3xl mx-auto";
+
+  /** Square thumbs for multi-image compact rows; full-width cap for single composite. */
+  const thumbFrameSquareCompact =
+    "mx-auto aspect-square w-full max-w-[min(100%,152px)] sm:max-w-[172px]";
+  const thumbFrameSquareDefault =
+    "mx-auto aspect-square w-full max-w-[min(100%,200px)] sm:max-w-[236px]";
+
+  const gridGap = compact ? "gap-2 sm:gap-2.5" : "gap-2.5 sm:gap-3";
 
   const selectedImage = selectedIdx !== null ? images[selectedIdx] : null;
   const selectedBlob =
@@ -82,38 +104,45 @@ export function ImageGallery({ images }: { images: ProjectImage[] }) {
 
   return (
     <>
-      <div className={`grid ${gridClass} gap-2.5 sm:gap-3`}>
+      <div className={`grid ${gridClass} ${gridGap}`}>
         {images.map((img, i) => {
           const displaySrc = blobUrls[i] ?? null;
           return (
-            <figure key={i} className="flex flex-col gap-1.5 sm:gap-2">
+            <figure
+              key={i}
+              className={`flex flex-col ${singleCompact ? "w-full max-w-xl mx-auto gap-2" : `items-center ${compact ? "gap-1" : "gap-1.5 sm:gap-2"}`}`}
+            >
               <button
                 type="button"
                 onClick={() => setSelectedIdx(i)}
-                className="group relative w-full cursor-zoom-in overflow-hidden rounded-lg border border-rim/45 bg-black/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-hi"
+                className={
+                  singleCompact
+                    ? "group relative flex w-full cursor-zoom-in items-center justify-center overflow-hidden rounded-lg border border-rim/45 bg-black/20 p-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-hi"
+                    : `group relative flex cursor-zoom-in items-center justify-center overflow-hidden rounded-lg border border-rim/45 bg-black/20 p-1.5 sm:p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-hi ${compact ? thumbFrameSquareCompact : thumbFrameSquareDefault}`
+                }
                 aria-label={`Open larger: ${img.alt}`}
               >
-                <div className="flex min-h-[72px] items-center justify-center p-1.5 sm:min-h-[88px] sm:p-2">
-                  {displaySrc && !thumbError[i] ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      src={displaySrc}
-                      alt={img.alt}
-                      draggable={false}
-                      onContextMenu={noCtx}
-                      onError={() =>
-                        setThumbError((prev) => ({ ...prev, [i]: true }))
-                      }
-                      className="max-h-[min(120px,22vh)] sm:max-h-[min(140px,24vh)] w-full object-contain object-center select-none transition-transform duration-300 group-hover:scale-[1.02]"
-                    />
-                  ) : displaySrc && thumbError[i] ? (
-                    <div className="px-4 py-12 text-center text-sm text-ink-muted">
-                      Image unavailable
-                    </div>
-                  ) : (
-                    <div className="h-20 w-full animate-pulse rounded-md bg-surface/80" />
-                  )}
-                </div>
+                {displaySrc && !thumbError[i] ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={displaySrc}
+                    alt={img.alt}
+                    draggable={false}
+                    onContextMenu={noCtx}
+                    onError={() =>
+                      setThumbError((prev) => ({ ...prev, [i]: true }))
+                    }
+                    className={
+                      singleCompact
+                        ? "w-full h-auto max-h-[min(20rem,40vh)] object-contain object-center select-none transition-transform duration-300 group-hover:scale-[1.01]"
+                        : "h-full w-full max-h-full max-w-full object-contain object-center select-none transition-transform duration-300 group-hover:scale-[1.02]"
+                    }
+                  />
+                ) : displaySrc && thumbError[i] ? (
+                  <div className="px-4 py-8 text-center text-sm text-ink-muted">Image unavailable</div>
+                ) : (
+                  <div className="h-full w-full animate-pulse rounded-md bg-surface/80" />
+                )}
                 <span className="absolute bottom-1.5 right-1.5 pointer-events-none rounded-full bg-black/70 px-2 py-0.5 text-[10px] font-medium text-white opacity-0 transition-opacity group-hover:opacity-100">
                   Enlarge
                 </span>
@@ -122,7 +151,7 @@ export function ImageGallery({ images }: { images: ProjectImage[] }) {
               {img.caption && (
                 <figcaption
                   title={img.caption}
-                  className="text-left text-[11px] sm:text-xs leading-snug text-ink-muted/90 font-sans line-clamp-3"
+                  className={`w-full text-left leading-snug text-ink-muted/90 font-sans line-clamp-3 ${compact ? "text-[10px] sm:text-[11px]" : "text-[11px] sm:text-xs"}`}
                 >
                   {img.caption}
                 </figcaption>

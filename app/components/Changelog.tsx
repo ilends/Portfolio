@@ -23,27 +23,51 @@ type Release = {
 
 const RELEASES: Release[] = [
   {
-    version: "v1.2.0",
+    version: "v2.0.0",
     date: "Apr 10, 2026",
     label: "latest",
     summary:
-      "Clinical blue visual system (replacing earlier green/teal experiments), a dedicated Profile page with long-form story and position accordion, and the usual production hardening in the same ship.",
+      "Major release: clinical blue visual system (replacing earlier green/teal aesthetic experiments), a dedicated Profile page, completion of the Praxis II case study, production hardening, new splash screen, and more.",
     changes: [
       {
         kind: "new",
-        text: "Dedicated `/profile` page: long-form narrative, portrait, “My Position on Engineering Design” accordion (same content as the PDF), Field Notes with expandable photo, return-home navigation, and staggered scroll-in motion like the rest of the site.",
+        text: "Dedicated `/profile` page: long-form narrative, portrait, my position on engineering design, Field Notes with expandable photo, return-home navigation, and staggered scroll-in motion like the rest of the site.",
+      },
+      {
+        kind: "new",
+        text: "Splash screen with new design with Open File animation and a splash timer",
+      },
+      {
+        kind: "new",
+        text: "New Praxis II case study page with a results hero section and a one-pager section.",
+      },
+      {
+        kind: "new",
+        text: "References for the design case studies and projects with a dedicated references page.",
+      },
+      {
+        kind: "new",
+        text: "Added accordance with the University of Toronto code of Academic Behaviourand Professional Engineers Ontario code of ethics",
       },
       {
         kind: "improved",
-        text: "Visual refresh to a cohesive clinical blue look — neutral dark surfaces, aquatic accents, calmer ECG/grid/hero, and tighter spacing and hierarchy on Home and About (the blue pass vs. the older chopped green layout).",
+        text: "Colour palette changed to a cohesive clinical blue look with neutral dark surfaces, aquatic accents, calmer ECG/grid/hero, and tighter spacing and hierarchy on Home and About.",
       },
       {
         kind: "improved",
         text: "Changelog: more room to read; inline `code` snippets use Geist Mono. Case study pages: refreshed copy is in progress across projects.",
       },
       {
-        kind: "new",
-        text: "Shipped alongside: branded 404, Open Graph / Twitter previews + broader SEO keywords, ~44px touch targets and clearer mobile menu semantics, image error fallbacks, hero `min-h-[100dvh]` + splash timer cleanup, and global overflow containment.",
+        kind: "improved",
+        text: "Mobile menu semantics improved for better accessibility.",
+      },
+      {
+        kind: "improved",
+        text: "Case study pages now include CTMFs, and an at a glance section.",
+      },
+      {
+        kind: "security",
+        text: "Dedicated 404 page, global overflow containment.",
       },
     ],
   },
@@ -75,7 +99,7 @@ const RELEASES: Release[] = [
       { kind: "security", text: "PDFs (reports + resume) served via opaque `/api/pdf/[slug]` route. Filenames no longer exposed in markup or network tab." },
       { kind: "security", text: "Gallery images loaded as `blob:` URLs, original file paths no longer visible in elements panels." },
       { kind: "security", text: "Static assets moved out of `public/` into `private/`, direct URL access blocked." },
-      { kind: "improved", text: "Colour palette: aquatic clinical blues, neutral dark slate, and clean white light mode." },
+      { kind: "improved", text: "Colour palette changed to surgical teals and deep navy to fit new branding." },
       { kind: "improved", text: "DotGrid graph-paper background (later simplified to a static CSS grid)." },
       { kind: "improved", text: "ECG-inspired accents on panels and hero; later toned down for a flatter clinical look." },
       { kind: "improved", text: "Technical Skills section expanded and grouped by categories." },

@@ -126,7 +126,7 @@ export default function RootLayout({
                 href="/changelog"
                 className="inline-flex min-h-11 items-center px-2 text-xs text-ink-muted/40 transition-colors duration-150 tracking-wide hover:text-accent-hi"
               >
-                changelog · v1.2.0
+                changelog · v2.0.0
               </a>
             </footer>
           </div>

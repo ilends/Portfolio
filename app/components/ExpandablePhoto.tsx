@@ -23,7 +23,8 @@ function CloseIcon() {
   );
 }
 
-export function ExpandablePhoto({
+/** Remount when `src` changes so load/error state resets without an effect. */
+function ExpandablePhotoInner({
   src,
   alt,
   caption,
@@ -34,10 +35,6 @@ export function ExpandablePhoto({
   const [open, setOpen] = useState(false);
   const [blobUrl, setBlobUrl] = useState(src);
   const [loadError, setLoadError] = useState(false);
-
-  useEffect(() => {
-    setLoadError(false);
-  }, [src]);
 
   useEffect(() => {
     let revoked = false;
@@ -72,7 +69,9 @@ export function ExpandablePhoto({
   }, [open]);
 
   function renderImg(extra: string, withObjectPosition = true) {
+    /* Blob URLs + object-position: native img (same pattern as ImageGallery). */
     return (
+      // eslint-disable-next-line @next/next/no-img-element -- blob URL preview
       <img
         src={blobUrl}
         alt={alt}
@@ -164,4 +163,8 @@ export function ExpandablePhoto({
       )}
     </>
   );
+}
+
+export function ExpandablePhoto(props: Props) {
+  return <ExpandablePhotoInner key={props.src} {...props} />;
 }
